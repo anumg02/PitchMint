@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Active Pitches - PitchMint</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .pitch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .pitch-card {
+            background: var(--surface-color);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(29, 77, 79, 0.08);
+            border: 1px solid rgba(132, 169, 140, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pitch-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 40px rgba(29, 77, 79, 0.15);
+            border-color: rgba(132, 169, 140, 0.3);
+        }
+
+        .pitch-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .startup-logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .startup-info h3 {
+            color: var(--primary-color);
+            margin: 0 0 0.5rem 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .founders {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .domain-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(132, 169, 140, 0.1), rgba(244, 163, 0, 0.1));
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid rgba(132, 169, 140, 0.2);
+        }
+
+        .funding-info {
+            background: linear-gradient(135deg, rgba(244, 163, 0, 0.05), rgba(29, 77, 79, 0.05));
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .funding-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .funding-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .traction-summary {
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(250, 249, 246, 0.5);
+            border-radius: 8px;
+            border-left: 3px solid var(--secondary-color);
+        }
+
+        .pitch-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-interest {
+            background: linear-gradient(135deg, var(--accent-color), #f39c12);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-interest:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(244, 163, 0, 0.3);
+        }
+
+        .btn-demo {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-demo:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .filters-section {
+            background: var(--surface-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(29, 77, 79, 0.05);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .filter-group label {
+            display: block;
+            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid rgba(132, 169, 140, 0.2);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            color: var(--text-color);
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            color: var(--primary-color);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .interest-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 500px;
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 16px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid rgba(132, 169, 140, 0.2);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        @media (max-width: 768px) {
+            .pitch-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .pitch-card {
+                padding: 1.5rem;
+            }
+
+            .pitch-actions {
+                flex-direction: column;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-lightbulb"></i>
+                <span>PitchMint</span>
+            </div>
+            <div class="nav-menu">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/pitches" class="nav-link active">Pitches</a>
+                <a href="/events" class="nav-link">Events</a>
+                <a href="/mentors" class="nav-link">Mentors</a>
+                <a href="/register-startup" class="btn btn-outline">Submit Pitch</a>
+                <a href="/register-investor" class="btn btn-primary">Join as Investor</a>
+            </div>
+            <div class="nav-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero-section text-center" style="padding: 4rem 0 2rem 0;">
+                <h1 class="hero-title">Active Startup Pitches</h1>
+                <p class="hero-subtitle">Discover innovative startups seeking investment and partnership opportunities</p>
+            </section>
+
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <h3 style="margin: 0 0 1rem 0; color: var(--primary-color);">
+                    <i class="fas fa-filter"></i> Filter Pitches
+                </h3>
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="domain-filter">Industry Domain</label>
+                        <select id="domain-filter">
+                            <option value="">All Domains</option>
+                            <option value="Clean Technology">Clean Technology</option>
+                            <option value="Healthcare Technology">Healthcare Technology</option>
+                            <option value="Financial Technology">Financial Technology</option>
+                            <option value="Education Technology">Education Technology</option>
+                            <option value="Food Technology">Food Technology</option>
+                            <option value="AI & Machine Learning">AI & Machine Learning</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="funding-filter">Funding Range</label>
+                        <select id="funding-filter">
+                            <option value="">All Ranges</option>
+                            <option value="0-500000">Under $500K</option>
+                            <option value="500000-2000000">$500K - $2M</option>
+                            <option value="2000000-5000000">$2M - $5M</option>
+                            <option value="5000000-10000000">$5M - $10M</option>
+                            <option value="10000000-999999999">$10M+</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="sort-filter">Sort By</label>
+                        <select id="sort-filter">
+                            <option value="newest">Newest First</option>
+                            <option value="funding-high">Highest Funding Goal</option>
+                            <option value="funding-low">Lowest Funding Goal</option>
+                            <option value="name">Company Name</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pitches Grid -->
+            <section id="pitches-container">
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <span style="margin-left: 1rem;">Loading pitches...</span>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Interest Modal -->
+    <div id="interest-modal" class="interest-modal">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h3 style="margin: 0 0 1rem 0; color: var(--primary-color);">
+                <i class="fas fa-heart"></i> Express Interest
+            </h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                Let this startup know you're interested in learning more about their opportunity.
+            </p>
+            
+            <form id="interest-form">
+                <input type="hidden" id="startup-id" name="startupId">
+                
+                <div class="form-group">
+                    <label for="investor-name">Your Name</label>
+                    <input type="text" id="investor-name" name="investorName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="investor-email">Your Email</label>
+                    <input type="email" id="investor-email" name="investorEmail" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="interest-message">Message (Optional)</label>
+                    <textarea id="interest-message" name="message" placeholder="What interests you about this startup? Any specific questions?"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="submit" class="btn-interest" style="flex: 1;">
+                        <i class="fas fa-paper-plane"></i> Send Interest
+                    </button>
+                    <button type="button" class="btn-demo" onclick="closeInterestModal()" style="flex: 1;">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>PitchMint</span>
+                    </div>
+                    <p>Connecting innovative startups with strategic investors</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Platform</h4>
+                    <a href="/pitches">Browse Pitches</a>
+                    <a href="/events">Live Events</a>
+                    <a href="/mentors">Find Mentors</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Get Started</h4>
+                    <a href="/register-startup">Submit Your Pitch</a>
+                    <a href="/register-investor">Join as Investor</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 PitchMint. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let allStartups = [];
+        let currentStartup = null;
+
+        // Load and display startups
+        async function loadPitches() {
+            try {
+                const response = await fetch('/api/startups');
+                const result = await response.json();
+                
+                if (result.success) {
+                    allStartups = result.data;
+                    displayPitches(allStartups);
+                } else {
+                    showError('Failed to load pitches');
+                }
+            } catch (error) {
+                console.error('Error loading pitches:', error);
+                showError('Error loading pitches');
+            }
+        }
+
+        // Display pitches in grid
+        function displayPitches(startups) {
+            const container = document.getElementById('pitches-container');
+            
+            if (startups.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search fa-3x" style="color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                        <h3>No pitches found</h3>
+                        <p>Try adjusting your filters or check back later for new opportunities.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const pitchesHTML = startups.map(startup => `
+                <div class="pitch-card">
+                    <div class="pitch-header">
+                        <div class="startup-logo">
+                            ${startup.name.charAt(0)}
+                        </div>
+                        <div class="startup-info">
+                            <h3>${startup.name}</h3>
+                            <div class="founders">Founded by ${startup.founders}</div>
+                            <span class="domain-badge">${startup.domain}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="funding-info">
+                        <div class="funding-amount">$${(startup.fundingGoal || 0).toLocaleString()}</div>
+                        <div class="funding-label">Funding Goal</div>
+                    </div>
+                    
+                    <div class="traction-summary">
+                        <strong>Traction Summary:</strong><br>
+                        ${startup.tractionSummary || 'Building momentum in the market with strong early indicators.'}
+                    </div>
+                    
+                    <div class="pitch-actions">
+                        <button class="btn-interest" onclick="showInterestModal(${startup.id})">
+                            <i class="fas fa-heart"></i> I'm Interested
+                        </button>
+                        ${startup.videoDemo ? `
+                            <a href="${startup.videoDemo}" target="_blank" class="btn-demo">
+                                <i class="fas fa-play"></i> Watch Demo
+                            </a>
+                        ` : `
+                            <button class="btn-demo" onclick="alert('Demo video coming soon!')">
+                                <i class="fas fa-play"></i> Demo Soon
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `<div class="pitch-grid">${pitchesHTML}</div>`;
+        }
+
+        // Show interest modal
+        function showInterestModal(startupId) {
+            currentStartup = allStartups.find(s => s.id === startupId);
+            if (!currentStartup) return;
+
+            document.getElementById('startup-id').value = startupId;
+            document.getElementById('interest-modal').style.display = 'block';
+        }
+
+        // Close interest modal
+        function closeInterestModal() {
+            document.getElementById('interest-modal').style.display = 'none';
+            document.getElementById('interest-form').reset();
+            currentStartup = null;
+        }
+
+        // Handle interest form submission
+        document.getElementById('interest-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch('/api/interests', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`Thank you for your interest in ${currentStartup.name}! We'll connect you with the founders soon.`);
+                    closeInterestModal();
+                } else {
+                    alert('Error recording your interest. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error submitting interest:', error);
+                alert('Error submitting your interest. Please try again.');
+            }
+        });
+
+        // Filter and sort functionality
+        function applyFilters() {
+            const domainFilter = document.getElementById('domain-filter').value;
+            const fundingFilter = document.getElementById('funding-filter').value;
+            const sortFilter = document.getElementById('sort-filter').value;
+            
+            let filtered = [...allStartups];
+            
+            // Apply domain filter
+            if (domainFilter) {
+                filtered = filtered.filter(startup => startup.domain === domainFilter);
+            }
+            
+            // Apply funding filter
+            if (fundingFilter) {
+                const [min, max] = fundingFilter.split('-').map(Number);
+                filtered = filtered.filter(startup => {
+                    const goal = startup.fundingGoal || 0;
+                    return goal >= min && goal <= max;
+                });
+            }
+            
+            // Apply sorting
+            switch (sortFilter) {
+                case 'newest':
+                    filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    break;
+                case 'funding-high':
+                    filtered.sort((a, b) => (b.fundingGoal || 0) - (a.fundingGoal || 0));
+                    break;
+                case 'funding-low':
+                    filtered.sort((a, b) => (a.fundingGoal || 0) - (b.fundingGoal || 0));
+                    break;
+                case 'name':
+                    filtered.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+            }
+            
+            displayPitches(filtered);
+        }
+
+        // Add event listeners for filters
+        document.getElementById('domain-filter').addEventListener('change', applyFilters);
+        document.getElementById('funding-filter').addEventListener('change', applyFilters);
+        document.getElementById('sort-filter').addEventListener('change', applyFilters);
+
+        // Close modal when clicking outside
+        document.getElementById('interest-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeInterestModal();
+            }
+        });
+
+        // Close modal with close button
+        document.querySelector('.modal-close').addEventListener('click', closeInterestModal);
+
+        // Show error message
+        function showError(message) {
+            const container = document.getElementById('pitches-container');
+            container.innerHTML = `
+                <div class="no-results">
+                    <i class="fas fa-exclamation-triangle fa-3x" style="color: var(--accent-color); margin-bottom: 1rem;"></i>
+                    <h3>Oops! Something went wrong</h3>
+                    <p>${message}</p>
+                    <button onclick="loadPitches()" class="btn-interest" style="margin-top: 1rem;">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                </div>
+            `;
+        }
+
+        // Navigation toggle functionality
+        document.querySelector('.nav-toggle').addEventListener('click', function() {
+            document.querySelector('.nav-menu').classList.toggle('active');
+        });
+
+        // Load pitches when page loads
+        document.addEventListener('DOMContentLoaded', loadPitches);
+    </script>
+</body>
+</html>
