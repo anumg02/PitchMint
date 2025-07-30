@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Your Startup - PitchMint</title>
+    <meta name="description" content="Register your startup and pitch to verified investors on PitchMint.">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-dark">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-navbar">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <div class="brand-icon me-2">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <span class="brand-text">PitchMint</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto me-3">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pitches.html">Browse Pitches</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="events.html">Live Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="mentors.html">Mentors</a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-light btn-sm" onclick="goToPage('register-startup.html')">
+                        For Startups
+                    </button>
+                    <button class="btn btn-primary-custom btn-sm" onclick="goToPage('register-investor.html')">
+                        For Investors
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Registration Form Section -->
+    <section class="py-5" style="margin-top: 100px;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <!-- Header -->
+                    <div class="text-center mb-5">
+                        <div class="feature-icon mx-auto mb-4 floating-icon" style="width: 80px; height: 80px;">
+                            <i class="fas fa-rocket float"></i>
+                        </div>
+                        <h1 class="display-5 fw-bold text-white mb-3">Register Your Startup</h1>
+                        <p class="lead text-muted">
+                            Join PitchMint and get your startup in front of verified investors. 
+                            Let's turn your vision into reality.
+                        </p>
+                    </div>
+
+                    <!-- Registration Form -->
+                    <div class="feature-card">
+                        <form id="startupForm" onsubmit="handleStartupRegistration(event)">
+                            <div class="row g-4">
+                                <!-- Company Information -->
+                                <div class="col-12">
+                                    <h4 class="text-white mb-3">
+                                        <i class="fas fa-building me-2 text-accent float-slow"></i>
+                                        Company Information
+                                    </h4>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold">Company Name *</label>
+                                    <input type="text" class="form-control bg-dark text-white border-secondary" 
+                                           name="companyName" required placeholder="Enter your company name">
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold">Industry *</label>
+                                    <select class="form-select bg-dark text-white border-secondary" name="industry" required>
+                                        <option value="">Select Industry</option>
+                                        <option value="technology">Technology</option>
+                                        <option value="healthcare">Healthcare</option>
+                                        <option value="fintech">FinTech</option>
+                                        <option value="ecommerce">E-commerce</option>
+                                        <option value="education">Education</option>
+                                        <option value="entertainment">Entertainment</option>
+                                        <option value="food">Food & Beverage</option>
+                                        <option value="sustainability">Sustainability</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold">Stage *</label>
+                                    <select class="form-select bg-dark text-white border-secondary" name="stage" required>
+                                        <option value="">Select Stage</option>
+                                        <option value="idea">Idea Stage</option>
+                                        <option value="prototype">Prototype</option>
+                                        <option value="mvp">MVP</option>
+                                        <option value="pre-revenue">Pre-Revenue</option>
+                                        <option value="early-revenue">Early Revenue</option>
+                                        <option value="growth">Growth Stage</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold">Founded Year</label>
+                                    <input type="number" class="form-control bg-dark text-white border-secondary" 
+                                           name="foundedYear" min="2000" max="2025" placeholder="2024">
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label class="form-label text-white fw-semibold">Company Description *</label>
+                                    <textarea class="form-control bg-dark text-white border-secondary" 
+                                              name="description" rows="4" required 
+                                              placeholder="Describe your company, what problem you solve, and your unique value proposition..."></textarea>
+                                </div>
+
+                                <!-- Founder Information -->
+                                <div class="col-12 mt-5">
+                                    <h4 class="text-white mb-3">
+                                        <i class="fas fa-user me-2 text-accent float-subtle"></i>
+                                        Founder Information
+                                    </h4>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold">Full Name *</label>
+                                    <input type="text" class="form-control bg-dark text-white border-secondary" 
+                                           name="founderName" required placeholder="Your full name">
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold">Email *</label>
+                                    <input type="email" class="form-control bg-dark text-white border-secondary" 
+                                           name="email" required placeholder="your@email.com">
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold">Phone</label>
+                                    <input type="tel" class="form-control bg-dark text-white border-secondary" 
+                                           name="phone" placeholder="+1 (555) 123-4567">
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold">LinkedIn</label>
+                                    <input type="url" class="form-control bg-dark text-white border-secondary" 
+                                           name="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+                                </div>
+
+                                <!-- Funding Information -->
+                                <div class="col-12 mt-5">
+                                    <h4 class="text-white mb-3">
+                                        <i class="fas fa-dollar-sign me-2 text-accent pulse-glow"></i>
+                                        Funding Details
+                                    </h4>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold">Funding Needed *</label>
+                                    <select class="form-select bg-dark text-white border-secondary" name="fundingNeeded" required>
+                                        <option value="">Select Amount</option>
+                                        <option value="10k-50k">$10K - $50K</option>
+                                        <option value="50k-100k">$50K - $100K</option>
+                                        <option value="100k-250k">$100K - $250K</option>
+                                        <option value="250k-500k">$250K - $500K</option>
+                                        <option value="500k-1m">$500K - $1M</option>
+                                        <option value="1m-5m">$1M - $5M</option>
+                                        <option value="5m+">$5M+</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold">Use of Funds</label>
+                                    <select class="form-select bg-dark text-white border-secondary" name="useOfFunds">
+                                        <option value="">Select Primary Use</option>
+                                        <option value="product-development">Product Development</option>
+                                        <option value="marketing">Marketing & Sales</option>
+                                        <option value="team-expansion">Team Expansion</option>
+                                        <option value="operations">Operations</option>
+                                        <option value="inventory">Inventory</option>
+                                        <option value="equipment">Equipment</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label class="form-label text-white fw-semibold">Pitch Summary</label>
+                                    <textarea class="form-control bg-dark text-white border-secondary" 
+                                              name="pitchSummary" rows="3" 
+                                              placeholder="Brief summary of your pitch to investors (optional)..."></textarea>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="col-12 text-center mt-5">
+                                    <button type="submit" class="btn btn-accent btn-lg px-5">
+                                        <i class="fas fa-rocket me-2"></i>
+                                        Register Startup
+                                    </button>
+                                </div>
+                                
+                                <div class="col-12 text-center mt-3">
+                                    <p class="text-muted">
+                                        Already registered? 
+                                        <a href="index.html" class="text-accent text-decoration-none">Go to Dashboard</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Benefits Section -->
+                    <div class="mt-5">
+                        <h3 class="text-white text-center mb-4">Why Join PitchMint?</h3>
+                        <div class="row g-4">
+                            <div class="col-md-4 text-center">
+                                <div class="feature-icon mx-auto mb-3 floating-icon" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-users float-slow"></i>
+                                </div>
+                                <h5 class="text-white">Verified Investors</h5>
+                                <p class="text-muted">Connect with pre-screened, active investors looking for opportunities.</p>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="feature-icon mx-auto mb-3 floating-icon" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-video float"></i>
+                                </div>
+                                <h5 class="text-white">Live Pitch Events</h5>
+                                <p class="text-muted">Present your startup in virtual Shark Tank-style events.</p>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="feature-icon mx-auto mb-3 floating-icon" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-handshake rotate-slow"></i>
+                                </div>
+                                <h5 class="text-white">Expert Mentorship</h5>
+                                <p class="text-muted">Get guidance from successful entrepreneurs and industry experts.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="js/main-new.js"></script>
+</body>
+</html>

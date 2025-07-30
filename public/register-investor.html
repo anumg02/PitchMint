@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register as Investor - PitchMint</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/" class="brand-link">
+                    <i class="fas fa-rocket"></i>
+                    PitchMint
+                </a>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/pitches" class="nav-link">Pitches</a>
+                <a href="/events" class="nav-link">Events</a>
+                <a href="/mentors" class="nav-link">Mentors</a>
+                <button class="btn btn-primary" onclick="showRegistrationModal()">Join PitchMint</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Registration Form -->
+    <section class="registration-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="registration-form-card">
+                        <div class="form-header">
+                            <h1>Register as Investor</h1>
+                            <p>Join our network of investors and discover the next big opportunity</p>
+                        </div>
+
+                        <form id="investorRegistrationForm">
+                            <!-- Personal Information -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-user"></i>
+                                    Personal Information
+                                </h3>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Full Name *</label>
+                                            <input type="text" name="name" class="form-input" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Title/Position</label>
+                                            <input type="text" name="title" class="form-input" 
+                                                   placeholder="e.g., Managing Partner, Angel Investor">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Email Address *</label>
+                                            <input type="email" name="email" class="form-input" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Phone Number</label>
+                                            <input type="tel" name="phone" class="form-input">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" name="location" class="form-input" 
+                                           placeholder="City, State/Country">
+                                </div>
+                            </div>
+
+                            <!-- Professional Background -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-briefcase"></i>
+                                    Professional Background
+                                </h3>
+
+                                <div class="form-group">
+                                    <label class="form-label">Company/Organization</label>
+                                    <input type="text" name="company" class="form-input">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">LinkedIn Profile</label>
+                                    <input type="url" name="linkedin" class="form-input" 
+                                           placeholder="https://linkedin.com/in/yourprofile">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Bio/Background</label>
+                                    <textarea name="bio" class="form-input" rows="4" 
+                                              placeholder="Tell us about your professional background and investment experience..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Investment Profile -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-chart-line"></i>
+                                    Investment Profile
+                                </h3>
+
+                                <div class="form-group">
+                                    <label class="form-label">Investor Type *</label>
+                                    <select name="investorType" class="form-input" required>
+                                        <option value="">Select Type</option>
+                                        <option value="Angel Investor">Angel Investor</option>
+                                        <option value="Venture Capital">Venture Capital</option>
+                                        <option value="Private Equity">Private Equity</option>
+                                        <option value="Corporate Investor">Corporate Investor</option>
+                                        <option value="Family Office">Family Office</option>
+                                        <option value="Individual">Individual Investor</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Minimum Investment (USD)</label>
+                                            <input type="number" name="minInvestment" class="form-input" min="0" step="1000">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label">Maximum Investment (USD)</label>
+                                            <input type="number" name="maxInvestment" class="form-input" min="0" step="1000">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Preferred Investment Stages</label>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="preferredStages" value="Pre-Seed">
+                                            <span class="checkmark"></span>
+                                            Pre-Seed
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="preferredStages" value="Seed">
+                                            <span class="checkmark"></span>
+                                            Seed
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="preferredStages" value="Series A">
+                                            <span class="checkmark"></span>
+                                            Series A
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="preferredStages" value="Series B">
+                                            <span class="checkmark"></span>
+                                            Series B
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="preferredStages" value="Series C+">
+                                            <span class="checkmark"></span>
+                                            Series C+
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Industry Interests</label>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="industryInterests" value="FinTech">
+                                            <span class="checkmark"></span>
+                                            FinTech
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="industryInterests" value="HealthTech">
+                                            <span class="checkmark"></span>
+                                            HealthTech
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="industryInterests" value="EdTech">
+                                            <span class="checkmark"></span>
+                                            EdTech
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="industryInterests" value="E-commerce">
+                                            <span class="checkmark"></span>
+                                            E-commerce
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="industryInterests" value="AI/ML">
+                                            <span class="checkmark"></span>
+                                            AI/ML
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="industryInterests" value="SaaS">
+                                            <span class="checkmark"></span>
+                                            SaaS
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="industryInterests" value="CleanTech">
+                                            <span class="checkmark"></span>
+                                            CleanTech
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="industryInterests" value="AgriTech">
+                                            <span class="checkmark"></span>
+                                            AgriTech
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Geographic Focus</label>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="geographicFocus" value="North America">
+                                            <span class="checkmark"></span>
+                                            North America
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="geographicFocus" value="Europe">
+                                            <span class="checkmark"></span>
+                                            Europe
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="geographicFocus" value="Asia">
+                                            <span class="checkmark"></span>
+                                            Asia
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="geographicFocus" value="Latin America">
+                                            <span class="checkmark"></span>
+                                            Latin America
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="geographicFocus" value="Africa">
+                                            <span class="checkmark"></span>
+                                            Africa
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="geographicFocus" value="Global">
+                                            <span class="checkmark"></span>
+                                            Global
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Additional Information -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-info-circle"></i>
+                                    Additional Information
+                                </h3>
+
+                                <div class="form-group">
+                                    <label class="form-label">Investment Approach</label>
+                                    <textarea name="investmentApproach" class="form-input" rows="3" 
+                                              placeholder="Describe your investment philosophy and what you look for in startups..."></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Value-Add Services</label>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="valueAddServices" value="Mentorship">
+                                            <span class="checkmark"></span>
+                                            Mentorship
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="valueAddServices" value="Strategic Guidance">
+                                            <span class="checkmark"></span>
+                                            Strategic Guidance
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="valueAddServices" value="Network Access">
+                                            <span class="checkmark"></span>
+                                            Network Access
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="valueAddServices" value="Business Development">
+                                            <span class="checkmark"></span>
+                                            Business Development
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="valueAddServices" value="Technical Expertise">
+                                            <span class="checkmark"></span>
+                                            Technical Expertise
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="valueAddServices" value="Fundraising Support">
+                                            <span class="checkmark"></span>
+                                            Fundraising Support
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Notable Investments/Experience</label>
+                                    <textarea name="notableInvestments" class="form-input" rows="3" 
+                                              placeholder="Share any notable investments, exits, or relevant experience..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-large">
+                                    <i class="fas fa-chart-line"></i>
+                                    Register as Investor
+                                </button>
+                                
+                                <p class="form-disclaimer">
+                                    By registering, you agree to our Terms of Service and Privacy Policy.
+                                    Verified startups will be able to see your profile and contact you for investment opportunities.
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Modal (for quick access) -->
+    <div id="registrationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Join PitchMint</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="registration-options">
+                    <div class="option-card" onclick="registerAsStartup()">
+                        <div class="option-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h4>Register as Startup</h4>
+                        <p>Pitch your idea and connect with investors</p>
+                        <span class="option-arrow">→</span>
+                    </div>
+                    
+                    <div class="option-card" onclick="registerAsInvestor()">
+                        <div class="option-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4>Register as Investor</h4>
+                        <p>Discover promising startups and investment opportunities</p>
+                        <span class="option-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>

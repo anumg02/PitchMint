@@ -1,0 +1,541 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // NextAuth.js fields
+  accounts Account[]
+  sessions Session[]
+
+  // User type
+  userType UserType @default(STARTUP)
+
+  // Profile relationships
+  startupProfile  StartupProfile?
+  investorProfile InvestorProfile?
+  mentorProfile   MentorProfile?
+
+  // Activities
+  pitches       Pitch[]
+  interests     Interest[]
+  messages      Message[]
+  reviews       Review[]
+  eventRSVPs    EventRSVP[]
+  forumPosts    ForumPost[]
+  forumComments ForumComment[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+// Startup Profile
+model StartupProfile {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Basic Info
+  startupName    String
+  tagline        String?
+  description    String?
+  website        String?
+  logo           String?
+  
+  // Founders
+  founderNames   String[]
+  
+  // Business Info
+  industry       String
+  stage          StartupStage @default(IDEA)
+  fundingGoal    Int?
+  currentFunding Int?         @default(0)
+  
+  // Documents
+  pitchDeckUrl   String?
+  demoVideoUrl   String?
+  
+  // Traction
+  userCount      Int?         @default(0)
+  mrr            Int?         @default(0) // Monthly Recurring Revenue in cents
+  burnRate       Int?         @default(0) // Monthly burn rate in cents
+  runway         Int?         @default(0) // Runway in months
+  
+  // Status
+  isVerified     Boolean      @default(false)
+  isPublic       Boolean      @default(true)
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  // Relationships
+  pitches        Pitch[]
+  interests      Interest[]
+  analytics      StartupAnalytics?
+
+  @@map("startup_profiles")
+}
+
+// Investor Profile
+model InvestorProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Basic Info
+  firstName       String
+  lastName        String
+  title           String?
+  company         String?
+  bio             String?
+  avatar          String?
+  
+  // Investment Preferences
+  investmentFocus String[] // Industries/domains
+  stages          StartupStage[]
+  geography       String[] // Geographic preferences
+  minInvestment   Int?     // Minimum investment in cents
+  maxInvestment   Int?     // Maximum investment in cents
+  
+  // Verification
+  isVerified      Boolean  @default(false)
+  kycStatus       KYCStatus @default(PENDING)
+  verificationDocs String[] // URLs to verification documents
+  
+  // Stats
+  totalInvestments Int     @default(0)
+  portfolioSize    Int     @default(0)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relationships
+  interests       Interest[]
+  offers          InvestmentOffer[]
+
+  @@map("investor_profiles")
+}
+
+// Mentor Profile
+model MentorProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Basic Info
+  firstName     String
+  lastName      String
+  title         String
+  company       String
+  bio           String?
+  avatar        String?
+  
+  // Expertise
+  expertise     String[] // Areas of expertise
+  experience    Int      // Years of experience
+  
+  // Availability
+  isAvailable   Boolean  @default(true)
+  hourlyRate    Int?     // Rate in cents per hour (null for free)
+  
+  // Stats
+  rating        Float    @default(0)
+  reviewCount   Int      @default(0)
+  sessionCount  Int      @default(0)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relationships
+  sessions      MentorSession[]
+  reviews       Review[]
+
+  @@map("mentor_profiles")
+}
+
+// Pitch model
+model Pitch {
+  id              String   @id @default(cuid())
+  startupId       String
+  startup         StartupProfile @relation(fields: [startupId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Pitch Content
+  title           String
+  description     String
+  deckUrl         String?
+  videoUrl        String?
+  
+  // Pitch Details
+  fundingGoal     Int      // Amount in cents
+  useOfFunds      String?
+  timeline        String?
+  
+  // Status
+  status          PitchStatus @default(DRAFT)
+  isPublic        Boolean     @default(false)
+  
+  // Metrics
+  viewCount       Int      @default(0)
+  interestCount   Int      @default(0)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relationships
+  interests       Interest[]
+  offers          InvestmentOffer[]
+
+  @@map("pitches")
+}
+
+// Interest tracking
+model Interest {
+  id          String   @id @default(cuid())
+  investorId  String
+  investor    InvestorProfile @relation(fields: [investorId], references: [id], onDelete: Cascade)
+  startupId   String
+  startup     StartupProfile @relation(fields: [startupId], references: [id], onDelete: Cascade)
+  pitchId     String?
+  pitch       Pitch?   @relation(fields: [pitchId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  message     String?
+  status      InterestStatus @default(INTERESTED)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([investorId, startupId])
+  @@map("interests")
+}
+
+// Investment Offers
+model InvestmentOffer {
+  id          String   @id @default(cuid())
+  investorId  String
+  investor    InvestorProfile @relation(fields: [investorId], references: [id], onDelete: Cascade)
+  pitchId     String
+  pitch       Pitch    @relation(fields: [pitchId], references: [id], onDelete: Cascade)
+  
+  amount      Int      // Offer amount in cents
+  equity      Float?   // Equity percentage
+  terms       String?  // Additional terms
+  message     String?
+  
+  status      OfferStatus @default(PENDING)
+  expiresAt   DateTime?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("investment_offers")
+}
+
+// Events (Pitch Events, Webinars, etc.)
+model Event {
+  id            String   @id @default(cuid())
+  title         String
+  description   String?
+  type          EventType
+  
+  // Scheduling
+  startTime     DateTime
+  endTime       DateTime
+  timezone      String   @default("UTC")
+  
+  // Virtual Event Details
+  meetingUrl    String?
+  meetingId     String?
+  
+  // Capacity
+  maxAttendees  Int?
+  currentAttendees Int @default(0)
+  
+  // Status
+  status        EventStatus @default(SCHEDULED)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relationships
+  rsvps         EventRSVP[]
+
+  @@map("events")
+}
+
+model EventRSVP {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  status    RSVPStatus @default(GOING)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([eventId, userId])
+  @@map("event_rsvps")
+}
+
+// Mentor Sessions
+model MentorSession {
+  id        String   @id @default(cuid())
+  mentorId  String
+  mentor    MentorProfile @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  
+  title     String
+  description String?
+  duration  Int      // Duration in minutes
+  price     Int?     // Price in cents
+  
+  // Scheduling
+  startTime DateTime
+  endTime   DateTime
+  
+  status    SessionStatus @default(SCHEDULED)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("mentor_sessions")
+}
+
+// Reviews
+model Review {
+  id        String   @id @default(cuid())
+  mentorId  String
+  mentor    MentorProfile @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  rating    Int      // 1-5 stars
+  comment   String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([mentorId, userId])
+  @@map("reviews")
+}
+
+// Forum
+model ForumPost {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title     String
+  content   String
+  category  ForumCategory
+  
+  viewCount Int      @default(0)
+  upvotes   Int      @default(0)
+  
+  isPinned  Boolean  @default(false)
+  isLocked  Boolean  @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  comments  ForumComment[]
+
+  @@map("forum_posts")
+}
+
+model ForumComment {
+  id        String   @id @default(cuid())
+  postId    String
+  post      ForumPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  content   String
+  upvotes   Int      @default(0)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("forum_comments")
+}
+
+// Messages
+model Message {
+  id         String   @id @default(cuid())
+  senderId   String
+  sender     User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId String
+  
+  content    String
+  isRead     Boolean  @default(false)
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("messages")
+}
+
+// Analytics
+model StartupAnalytics {
+  id              String   @id @default(cuid())
+  startupId       String   @unique
+  startup         StartupProfile @relation(fields: [startupId], references: [id], onDelete: Cascade)
+  
+  // Weekly metrics
+  weeklyActiveUsers    Int @default(0)
+  weeklyRevenue        Int @default(0) // In cents
+  weeklySignups        Int @default(0)
+  
+  // Monthly metrics
+  monthlyActiveUsers   Int @default(0)
+  monthlyRevenue       Int @default(0) // In cents
+  monthlySignups       Int @default(0)
+  
+  // Growth metrics
+  userGrowthRate       Float @default(0) // Percentage
+  revenueGrowthRate    Float @default(0) // Percentage
+  
+  lastUpdated          DateTime @default(now())
+
+  @@map("startup_analytics")
+}
+
+// Enums
+enum UserType {
+  STARTUP
+  INVESTOR
+  MENTOR
+}
+
+enum StartupStage {
+  IDEA
+  PROTOTYPE
+  MVP
+  EARLY_REVENUE
+  GROWTH
+  SCALE
+}
+
+enum KYCStatus {
+  PENDING
+  IN_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum PitchStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum InterestStatus {
+  INTERESTED
+  CONTACTED
+  MEETING_SCHEDULED
+  DECLINED
+}
+
+enum OfferStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+enum EventType {
+  PITCH_EVENT
+  WEBINAR
+  WORKSHOP
+  NETWORKING
+  AMA
+}
+
+enum EventStatus {
+  SCHEDULED
+  LIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum RSVPStatus {
+  GOING
+  MAYBE
+  NOT_GOING
+}
+
+enum SessionStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ForumCategory {
+  GENERAL
+  FUNDING
+  TECHNOLOGY
+  MARKETING
+  LEGAL
+  COFOUNDER_SEARCH
+  FEEDBACK
+}
