@@ -3,251 +3,818 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PitchMint - Connect Startups with Investors</title>
-    <meta name="description" content="The premier platform for early-stage startups to pitch their ideas and connect with verified investors, angel investors, and mentors from top tech companies.">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
+    <title>PitchMint - Connect Startups with Investors | Virtual Shark Tank</title>
+    <meta name="description" content="The premier virtual Shark Tank platform for early-stage startups to pitch their ideas and connect with verified investors, angel investors, and mentors.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/unified-nav.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #1d4d4f 0%, #2d6366 50%, #84a98c 100%);
+            --accent-gradient: linear-gradient(135deg, #f4a300 0%, #f39c12 100%);
+            --surface-color: rgba(255, 255, 255, 0.95);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--primary-gradient);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            padding: 150px 0 100px 0;
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><path d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/></g></g></svg>') repeat;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 2rem;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: slideInDown 1s ease-out;
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+            animation: slideInUp 1s ease-out 0.3s both;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            margin: 3rem 0 4rem 0;
+            animation: slideInUp 1s ease-out 0.6s both;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 3rem;
+            font-weight: 800;
+            color: #f4a300;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(244, 163, 0, 0.3);
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 3rem;
+            animation: slideInUp 1s ease-out 0.9s both;
+        }
+
+        .btn-cta {
+            padding: 1.2rem 3rem;
+            border: none;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn-cta:hover::before {
+            left: 100%;
+        }
+
+        .btn-cta-primary {
+            background: var(--accent-gradient);
+            color: white;
+            box-shadow: 0 10px 30px rgba(244, 163, 0, 0.3);
+        }
+
+        .btn-cta-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(244, 163, 0, 0.4);
+        }
+
+        .btn-cta-secondary {
+            background: transparent;
+            color: white;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-cta-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.8);
+            transform: translateY(-5px);
+        }
+
+        /* New Investor-Entrepreneur Button */
+        .btn-cta-hybrid {
+            background: linear-gradient(135deg, #8e44ad 0%, #3498db 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(142, 68, 173, 0.3);
+            position: relative;
+        }
+
+        .btn-cta-hybrid:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(142, 68, 173, 0.4);
+        }
+
+        .btn-cta-hybrid .btn-subtitle {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            font-weight: 500;
+            text-transform: none;
+            letter-spacing: 0;
+            margin-top: 0.2rem;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .feature-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            animation: slideInUp 0.8s ease-out both;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            border-color: #f4a300;
+        }
+
+        .feature-icon {
+            font-size: 4rem;
+            color: #f4a300;
+            margin-bottom: 2rem;
+            text-shadow: 0 4px 15px rgba(244, 163, 0, 0.3);
+        }
+
+        .feature-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .feature-card .btn {
+            background: var(--accent-gradient);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(244, 163, 0, 0.4);
+        }
+
+        /* Platform Stats Section */
+        .platform-stats {
+            padding: 80px 0;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .platform-stat {
+            text-align: center;
+            padding: 2rem;
+            background: var(--glass-bg);
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .platform-stat:hover {
+            transform: translateY(-5px);
+            border-color: #f4a300;
+        }
+
+        .platform-stat .stat-icon {
+            font-size: 2.5rem;
+            color: #f4a300;
+            margin-bottom: 1rem;
+        }
+
+        .platform-stat .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .platform-stat .stat-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 60px 0 30px 0;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 1rem;
+        }
+
+        .footer-section ul li a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: #f4a300;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Animations */
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-stats {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .feature-card {
+                padding: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-section {
+                padding: 120px 0 60px 0;
+            }
+
+            .btn-cta {
+                padding: 1rem 2rem;
+                font-size: 1rem;
+            }
+
+            .hero-content {
+                padding: 0 1rem;
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="nav-brand">
-                <a href="index.html" class="logo">
-                    <div class="logo-icon">
-                        <i class="fas fa-rocket"></i>
-                    </div>
-                    <span class="logo-text">PitchMint</span>
-                </a>
-            </div>
-            
-            <div class="nav-links">
-                <a href="index.html" class="nav-link active">Home</a>
-                <a href="pitches.html" class="nav-link">Browse Pitches</a>
-                <a href="events.html" class="nav-link">Live Events</a>
-                <a href="mentors.html" class="nav-link">Mentors</a>
-                <a href="#contact" class="nav-link">Contact</a>
-            </div>
-            
-            <div class="nav-actions">
-                <button type="button" class="btn btn-outline" onclick="registerAsStartup()">For Startups</button>
-                <button type="button" class="btn btn-primary" onclick="registerAsInvestor()">For Investors</button>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-container"></div>
 
     <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-background">
-            <div class="hero-pattern"></div>
-        </div>
-        
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-text">
-                    <span class="hero-badge">
-                        <i class="fas fa-star"></i>
-                        #1 Startup-Investor Platform
-                    </span>
-                    
-                    <h1 class="hero-title">
-                        Where <span class="text-accent">Innovation</span> 
-                        Meets <span class="text-accent">Investment</span>
-                    </h1>
-                    
-                    <p class="hero-description">
-                        Join the premier virtual Shark Tank platform connecting innovative startups 
-                        with visionary investors worldwide.
-                    </p>
-                    
-                    <div class="hero-actions">
-                        <button type="button" class="btn btn-secondary btn-lg" onclick="registerAsStartup()">
-                            <i class="fas fa-rocket"></i>
-                            Pitch Your Startup
-                        </button>
-                        <button type="button" class="btn btn-outline-light btn-lg" onclick="registerAsInvestor()">
-                            <i class="fas fa-chart-line"></i>
-                            Find Investments
-                        </button>
-                    </div>
-                    
-                    <div class="hero-stats">
-                        <div class="stat-item">
-                            <h3 data-count="250">0</h3>
-                            <p>Active Startups</p>
-                        </div>
-                        <div class="stat-item">
-                            <h3 data-count="150">0</h3>
-                            <p>Verified Investors</p>
-                        </div>
-                        <div class="stat-item">
-                            <h3 data-count="50">0</h3>
-                            <p>Million Funded</p>
-                        </div>
-                    </div>
+    <section class="hero-section">
+        <div class="hero-background"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">The Virtual Shark Tank for Startups</h1>
+            <p class="hero-subtitle">
+                Connect revolutionary startups with visionary investors. 
+                Pitch your ideas, secure funding, and transform the future of innovation.
+            </p>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number" data-count="2500">0</span>
+                    <span class="stat-label">Active Startups</span>
                 </div>
-                
-                <div class="hero-visual">
-                    <div class="hero-graphic">
-                        <div class="graphic-element element-1">
-                            <i class="fas fa-lightbulb"></i>
-                            <span>Innovation</span>
-                        </div>
-                        <div class="graphic-element element-2">
-                            <i class="fas fa-handshake"></i>
-                            <span>Partnership</span>
-                        </div>
-                        <div class="graphic-element element-3">
-                            <i class="fas fa-chart-growth"></i>
-                            <span>Growth</span>
-                        </div>
-                        <div class="main-graphic">
-                            <i class="fas fa-building"></i>
-                        </div>
-                    </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-count="850">0</span>
+                    <span class="stat-label">Verified Investors</span>
                 </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-count="125">0</span>
+                    <span class="stat-label">Million Funded</span>
+                </div>
+            </div>
+            
+            <div class="cta-buttons">
+                <a href="register-startup.html" class="btn-cta btn-cta-primary">
+                    <i class="fas fa-rocket"></i>
+                    <div>
+                        Launch Your Startup
+                    </div>
+                </a>
+                <a href="register-investor.html" class="btn-cta btn-cta-secondary">
+                    <i class="fas fa-handshake"></i>
+                    <div>
+                        Become an Investor
+                    </div>
+                </a>
+                <a href="register-investor-entrepreneur.html" class="btn-cta btn-cta-hybrid">
+                    <i class="fas fa-user-tie"></i>
+                    <div>
+                        Investor + Entrepreneur
+                        <div class="btn-subtitle">Invest & Pitch Ideas</div>
+                    </div>
+                </a>
             </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section class="features">
-        <div class="container">
-            <div class="section-header">
-                <h2>Why Choose PitchMint?</h2>
-                <p>Connecting innovation with investment through our comprehensive platform</p>
+    <section class="features-section">
+        <div class="features-header">
+            <h2 class="section-title">Why Choose PitchMint?</h2>
+            <p class="section-subtitle">
+                The most comprehensive platform designed to connect ambitious startups with the right investors
+            </p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <h3 class="feature-title">Live Pitch Events</h3>
+                <p class="feature-description">
+                    Participate in virtual pitch competitions with real-time feedback from investors and industry experts.
+                </p>
+                <a href="events.html" class="btn">
+                    <i class="fas fa-calendar"></i>
+                    View Events
+                </a>
             </div>
             
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-video"></i>
-                    </div>
-                    <h3>Live Pitch Events</h3>
-                    <p>
-                        Join virtual Shark Tank-style events where startups present 
-                        to panels of experienced investors in real-time.
-                    </p>
-                    <button type="button" class="btn btn-primary" onclick="goToPage('events.html')">
-                        View Events <i class="fas fa-arrow-right"></i>
-                    </button>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-handshake"></i>
                 </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h3>Verified Network</h3>
-                    <p>
-                        Connect with verified investors, angel groups, and mentors 
-                        from top companies and successful exits.
-                    </p>
-                    <button type="button" class="btn btn-primary" onclick="goToPage('mentors.html')">
-                        Meet Mentors <i class="fas fa-arrow-right"></i>
-                    </button>
+                <h3 class="feature-title">Verified Investors</h3>
+                <p class="feature-description">
+                    Connect with pre-screened angel investors, VCs, and industry leaders actively seeking investment opportunities.
+                </p>
+                <a href="pitches.html" class="btn">
+                    <i class="fas fa-search"></i>
+                    Find Startups
+                </a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
                 </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3>Smart Matching</h3>
-                    <p>
-                        Our AI-powered system matches startups with the right investors 
-                        based on industry, stage, and investment criteria.
-                    </p>
-                    <button type="button" class="btn btn-primary" onclick="goToPage('pitches.html')">
-                        Browse Pitches <i class="fas fa-arrow-right"></i>
-                    </button>
+                <h3 class="feature-title">Smart Analytics</h3>
+                <p class="feature-description">
+                    Track your pitch performance, investor engagement, and funding progress with detailed analytics and insights.
+                </p>
+                <a href="register-startup.html" class="btn">
+                    <i class="fas fa-chart-bar"></i>
+                    Get Analytics
+                </a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
                 </div>
+                <h3 class="feature-title">Expert Mentorship</h3>
+                <p class="feature-description">
+                    Access guidance from successful entrepreneurs and industry veterans to refine your strategy and pitch.
+                </p>
+                <a href="mentors.html" class="btn">
+                    <i class="fas fa-user-graduate"></i>
+                    Find Mentors
+                </a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-network-wired"></i>
+                </div>
+                <h3 class="feature-title">Networking Hub</h3>
+                <p class="feature-description">
+                    Build valuable connections within our community of entrepreneurs, investors, and industry professionals.
+                </p>
+                <a href="events.html" class="btn">
+                    <i class="fas fa-comments"></i>
+                    Join Network
+                </a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="feature-title">Secure Platform</h3>
+                <p class="feature-description">
+                    Your intellectual property and sensitive business information are protected with enterprise-grade security.
+                </p>
+                <a href="register-startup.html" class="btn">
+                    <i class="fas fa-lock"></i>
+                    Learn More
+                </a>
             </div>
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="cta">
-        <div class="container">
-            <div class="cta-content">
-                <h2>Ready to Start Your Journey?</h2>
-                <p>
-                    Whether you're a startup looking for funding or an investor seeking 
-                    the next big opportunity, PitchMint is your gateway to success.
-                </p>
-                
-                <div class="cta-actions">
-                    <button type="button" class="btn btn-accent btn-lg" onclick="registerAsStartup()">
-                        <i class="fas fa-rocket"></i>
-                        Start Pitching
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-lg" onclick="registerAsInvestor()">
-                        <i class="fas fa-dollar-sign"></i>
-                        Start Investing
-                    </button>
+    <!-- Platform Stats -->
+    <section class="platform-stats">
+        <div class="stats-container">
+            <div class="platform-stat">
+                <div class="stat-icon">
+                    <i class="fas fa-dollar-sign"></i>
                 </div>
+                <div class="stat-value" data-count="125">0</div>
+                <div class="stat-text">Million Raised</div>
+            </div>
+            <div class="platform-stat">
+                <div class="stat-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <div class="stat-value" data-count="2500">0</div>
+                <div class="stat-text">Startups Launched</div>
+            </div>
+            <div class="platform-stat">
+                <div class="stat-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <div class="stat-value" data-count="850">0</div>
+                <div class="stat-text">Active Investors</div>
+            </div>
+            <div class="platform-stat">
+                <div class="stat-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="stat-value" data-count="95">0</div>
+                <div class="stat-text">Success Rate %</div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <div class="footer-logo">
-                        <div class="logo-icon">
-                            <i class="fas fa-rocket"></i>
-                        </div>
-                        <span class="logo-text">PitchMint</span>
-                    </div>
-                    <p>
-                        Connecting innovative startups with visionary investors 
-                        to build the future together.
-                    </p>
-                </div>
-                
-                <div class="footer-links">
-                    <div class="link-group">
-                        <h4>Platform</h4>
-                        <a href="pitches.html">Browse Pitches</a>
-                        <a href="events.html">Live Events</a>
-                        <a href="mentors.html">Meet Mentors</a>
-                    </div>
-                    
-                    <div class="link-group">
-                        <h4>Get Started</h4>
-                        <a href="register-startup-new.html">Register as Startup</a>
-                        <a href="register-investor.html">Register as Investor</a>
-                    </div>
-                    
-                    <div class="link-group">
-                        <h4>Support</h4>
-                        <a href="#help">Help Center</a>
-                        <a href="#contact">Contact Us</a>
-                        <a href="#privacy">Privacy Policy</a>
-                        <a href="#terms">Terms of Service</a>
-                    </div>
-                </div>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3><i class="fas fa-rocket"></i> PitchMint</h3>
+                <p style="color: rgba(255, 255, 255, 0.8); line-height: 1.6; margin-top: 1rem;">
+                    The premier virtual Shark Tank platform connecting innovative startups with visionary investors worldwide.
+                </p>
             </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2025 PitchMint. All rights reserved.</p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-linkedin"></i></a>
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                </div>
+            <div class="footer-section">
+                <h3>For Startups</h3>
+                <ul>
+                    <li><a href="register-startup.html">Submit Pitch</a></li>
+                    <li><a href="events.html">Pitch Events</a></li>
+                    <li><a href="mentors.html">Find Mentors</a></li>
+                    <li><a href="pitches.html">Success Stories</a></li>
+                </ul>
             </div>
+            <div class="footer-section">
+                <h3>For Investors</h3>
+                <ul>
+                    <li><a href="register-investor.html">Join as Investor</a></li>
+                    <li><a href="pitches.html">Browse Startups</a></li>
+                    <li><a href="events.html">Investment Events</a></li>
+                    <li><a href="register-investor-entrepreneur.html">Dual Role</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="#about">About PitchMint</a></li>
+                    <li><a href="#blog">Blog & Insights</a></li>
+                    <li><a href="#support">Help Center</a></li>
+                    <li><a href="#contact">Contact Us</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 PitchMint. All rights reserved. | Connecting Dreams with Capital</p>
         </div>
     </footer>
 
-    <!-- Custom JavaScript -->
-    <script src="js/main-new.js"></script>
+    <!-- Scripts -->
+    <script src="js/unified-nav.js"></script>
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load unified navigation
+            createUnifiedNavbar('home');
+            
+            // Initialize animations and counters
+            initializeCounters();
+            initializeAnimations();
+            
+            // Initialize page effects
+            initializeParallax();
+            
+            console.log('🎉 PitchMint homepage loaded successfully!');
+        });
+
+        // Counter animation
+        function initializeCounters() {
+            function animateCounter(element, target, duration = 2000) {
+                const start = 0;
+                const increment = target / (duration / 16);
+                let current = start;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    element.textContent = Math.floor(current).toLocaleString();
+                }, 16);
+            }
+            
+            // Animate counters when they come into view
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const counter = entry.target;
+                        const target = parseInt(counter.dataset.count);
+                        animateCounter(counter, target);
+                        observer.unobserve(counter);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('[data-count]').forEach(counter => {
+                observer.observe(counter);
+            });
+        }
+
+        // Initialize animations
+        function initializeAnimations() {
+            // Stagger feature card animations
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.2}s`;
+            });
+            
+            // Add hover effects to CTA buttons
+            document.querySelectorAll('.btn-cta').forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.05)';
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        }
+
+        // Parallax effects
+        function initializeParallax() {
+            const heroBackground = document.querySelector('.hero-background');
+            if (heroBackground) {
+                let ticking = false;
+                
+                function updateParallax() {
+                    const scrolled = window.pageYOffset;
+                    const rate = scrolled * -0.5;
+                    heroBackground.style.transform = `translateY(${rate}px)`;
+                    ticking = false;
+                }
+                
+                function requestTick() {
+                    if (!ticking) {
+                        requestAnimationFrame(updateParallax);
+                        ticking = true;
+                    }
+                }
+                
+                window.addEventListener('scroll', requestTick);
+            }
+        }
+
+        // Smooth scrolling for internal links
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' && e.target.getAttribute('href')?.startsWith('#')) {
+                e.preventDefault();
+                const target = document.querySelector(e.target.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }
+        });
+
+        // Add loading animation
+        window.addEventListener('load', function() {
+            document.body.style.opacity = '1';
+            
+            // Add success notification
+            setTimeout(() => {
+                if (window.showNotification) {
+                    showNotification('🚀 Welcome to PitchMint! Ready to transform your startup journey?', 'success');
+                }
+            }, 2000);
+        });
+    </script>
 </body>
 </html>
