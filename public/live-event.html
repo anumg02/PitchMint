@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Pitch Event - PitchMint</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .live-event-container {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .event-header {
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.2), rgba(255, 55, 66, 0.1));
+            border-bottom: 2px solid rgba(255, 71, 87, 0.3);
+            padding: 2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .event-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .event-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #ff4757, #ff3742);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .event-details h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        .event-meta {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+        }
+
+        .event-stats {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .video-section {
+            background: #000;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            position: relative;
+            aspect-ratio: 16/9;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .video-content {
+            text-align: center;
+            z-index: 2;
+        }
+
+        .play-button {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-full);
+            background: linear-gradient(135deg, var(--accent-color), #f39c12);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-bottom: 1rem;
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(244, 163, 0, 0.5);
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(29, 77, 79, 0.8), 
+                rgba(132, 169, 140, 0.6),
+                rgba(244, 163, 0, 0.4)
+            );
+            z-index: 1;
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            padding: 2rem;
+            z-index: 3;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-color), #f39c12);
+            width: 35%;
+            animation: progress 60s linear infinite;
+        }
+
+        @keyframes progress {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        .control-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .sidebar-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .current-pitch {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .pitch-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-full);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .pitch-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .pitch-tagline {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1rem;
+        }
+
+        .pitch-stage {
+            background: linear-gradient(135deg, var(--accent-color), #f39c12);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-lg);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all var(--transition-fast);
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10B981, #047857);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .schedule-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            transition: all var(--transition-fast);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .schedule-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .schedule-item.active {
+            background: rgba(244, 163, 0, 0.2);
+            border-color: var(--accent-color);
+        }
+
+        .schedule-time {
+            font-weight: 600;
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            min-width: 70px;
+        }
+
+        .schedule-company {
+            flex: 1;
+        }
+
+        .company-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .company-domain {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .chat-container {
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .chat-message {
+            margin-bottom: 1rem;
+            animation: slideInRight 0.3s ease;
+        }
+
+        @keyframes slideInRight {
+            from { 
+                opacity: 0; 
+                transform: translateX(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(0); 
+            }
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-avatar {
+            width: 25px;
+            height: 25px;
+            border-radius: var(--radius-full);
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .username {
+            font-weight: 500;
+            color: var(--accent-color);
+            font-size: 0.9rem;
+        }
+
+        .timestamp {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-left: auto;
+        }
+
+        .message-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 0.75rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .send-chat-btn {
+            background: linear-gradient(135deg, var(--accent-color), #f39c12);
+            border: none;
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .send-chat-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .viewer-count {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .viewer-indicator {
+            width: 8px;
+            height: 8px;
+            background: #10B981;
+            border-radius: 50%;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .event-info {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .event-stats {
+                justify-content: center;
+            }
+
+            .video-section {
+                aspect-ratio: 16/9;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .chat-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="live-event-container">
+        <!-- Event Header -->
+        <header class="event-header">
+            <div class="event-info">
+                <div class="event-title">
+                    <div class="live-indicator">
+                        <div class="live-dot"></div>
+                        LIVE
+                    </div>
+                    <div class="event-details">
+                        <h1>CleanTech Demo Day 2024</h1>
+                        <div class="event-meta">Sponsored by GreenVentures • Virtual Event</div>
+                    </div>
+                </div>
+                
+                <div class="event-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="viewer-count">1,247</div>
+                        <div class="stat-label">Viewers</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">15</div>
+                        <div class="stat-label">Startups</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Investors</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Video Section -->
+            <div class="video-section">
+                <div class="video-placeholder">
+                    <div class="video-overlay"></div>
+                    <div class="video-content">
+                        <button class="play-button">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <p>EcoTech Solutions presenting now</p>
+                        <div class="viewer-count">
+                            <div class="viewer-indicator"></div>
+                            <span id="live-viewers">1,247 watching live</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="video-controls">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="control-buttons">
+                        <div class="control-group">
+                            <button class="control-btn">
+                                <i class="fas fa-volume-up"></i>
+                            </button>
+                            <button class="control-btn">
+                                <i class="fas fa-closed-captioning"></i>
+                            </button>
+                        </div>
+                        <div class="control-group">
+                            <button class="control-btn">
+                                <i class="fas fa-share"></i>
+                            </button>
+                            <button class="control-btn">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Current Pitch -->
+                <div class="sidebar-card">
+                    <h3 class="card-title">
+                        <i class="fas fa-presentation"></i>
+                        Now Presenting
+                    </h3>
+                    
+                    <div class="current-pitch">
+                        <div class="pitch-logo">ET</div>
+                        <div class="pitch-name">EcoTech Solutions</div>
+                        <div class="pitch-tagline">Revolutionary energy storage for a sustainable future</div>
+                        <div class="pitch-stage">Seeking $2M Series A</div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="showInterestModal()">
+                            <i class="fas fa-heart"></i>
+                            I'm Interested
+                        </button>
+                        <button class="btn btn-secondary" onclick="addToWatchlist()">
+                            <i class="fas fa-bookmark"></i>
+                            Save
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Event Schedule -->
+                <div class="sidebar-card">
+                    <h3 class="card-title">
+                        <i class="fas fa-clock"></i>
+                        Event Schedule
+                    </h3>
+                    
+                    <div class="schedule-list">
+                        <div class="schedule-item">
+                            <div class="schedule-time">2:00 PM</div>
+                            <div class="schedule-company">
+                                <div class="company-name">GreenStart</div>
+                                <div class="company-domain">Clean Energy</div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item active">
+                            <div class="schedule-time">2:15 PM</div>
+                            <div class="schedule-company">
+                                <div class="company-name">EcoTech Solutions</div>
+                                <div class="company-domain">Energy Storage</div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="schedule-time">2:30 PM</div>
+                            <div class="schedule-company">
+                                <div class="company-name">CleanAir Dynamics</div>
+                                <div class="company-domain">Air Purification</div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="schedule-time">2:45 PM</div>
+                            <div class="schedule-company">
+                                <div class="company-name">SolarInnovate</div>
+                                <div class="company-domain">Solar Technology</div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="schedule-time">3:00 PM</div>
+                            <div class="schedule-company">
+                                <div class="company-name">WaterTech Pro</div>
+                                <div class="company-domain">Water Treatment</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Chat -->
+                <div class="sidebar-card">
+                    <h3 class="card-title">
+                        <i class="fas fa-comments"></i>
+                        Live Chat
+                    </h3>
+                    
+                    <div class="chat-container">
+                        <div class="chat-messages" id="chat-messages">
+                            <div class="chat-message">
+                                <div class="message-header">
+                                    <div class="user-avatar">JC</div>
+                                    <div class="username">Jennifer C.</div>
+                                    <div class="timestamp">2:16 PM</div>
+                                </div>
+                                <div class="message-text">Impressive traction metrics! 📈</div>
+                            </div>
+                            
+                            <div class="chat-message">
+                                <div class="message-header">
+                                    <div class="user-avatar">MT</div>
+                                    <div class="username">Marcus T.</div>
+                                    <div class="timestamp">2:17 PM</div>
+                                </div>
+                                <div class="message-text">What's the timeline for commercialization?</div>
+                            </div>
+                            
+                            <div class="chat-message">
+                                <div class="message-header">
+                                    <div class="user-avatar">SC</div>
+                                    <div class="username">Sarah Chen</div>
+                                    <div class="timestamp">2:17 PM</div>
+                                </div>
+                                <div class="message-text">Thanks for the great questions! We're targeting Q2 2025 for full commercial launch.</div>
+                            </div>
+                            
+                            <div class="chat-message">
+                                <div class="message-header">
+                                    <div class="user-avatar">AK</div>
+                                    <div class="username">Alex K.</div>
+                                    <div class="timestamp">2:18 PM</div>
+                                </div>
+                                <div class="message-text">The market opportunity is huge! 🚀</div>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" placeholder="Join the conversation..." id="chat-input">
+                            <button class="send-chat-btn" onclick="sendChatMessage()">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interest Modal -->
+    <div id="interest-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Express Interest in EcoTech Solutions</h3>
+                <button class="modal-close" onclick="closeInterestModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="interest-form">
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="text" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Investment Interest Level</label>
+                        <select name="interest">
+                            <option>Considering Investment</option>
+                            <option>Ready to Discuss Terms</option>
+                            <option>Want More Information</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Message (Optional)</label>
+                        <textarea name="message" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Interest</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Live Event Functionality
+        class LiveEvent {
+            constructor() {
+                this.viewerCount = 1247;
+                this.chatMessages = [];
+                this.init();
+            }
+
+            init() {
+                this.startViewerCountAnimation();
+                this.setupChatInput();
+                this.simulateActivity();
+            }
+
+            startViewerCountAnimation() {
+                setInterval(() => {
+                    // Simulate viewer count changes
+                    const change = Math.floor(Math.random() * 10) - 5;
+                    this.viewerCount = Math.max(1000, this.viewerCount + change);
+                    
+                    document.getElementById('viewer-count').textContent = this.viewerCount.toLocaleString();
+                    document.getElementById('live-viewers').textContent = `${this.viewerCount.toLocaleString()} watching live`;
+                }, 3000);
+            }
+
+            setupChatInput() {
+                const chatInput = document.getElementById('chat-input');
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.sendChatMessage();
+                    }
+                });
+            }
+
+            sendChatMessage() {
+                const chatInput = document.getElementById('chat-input');
+                const message = chatInput.value.trim();
+                
+                if (!message) return;
+
+                // Add user message
+                this.addChatMessage('You', 'YU', message, new Date());
+                
+                // Clear input
+                chatInput.value = '';
+                
+                // Simulate response occasionally
+                if (Math.random() > 0.7) {
+                    setTimeout(() => {
+                        this.simulateChatMessage();
+                    }, 1000 + Math.random() * 3000);
+                }
+            }
+
+            addChatMessage(username, initials, message, timestamp) {
+                const chatMessages = document.getElementById('chat-messages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'chat-message';
+                
+                const timeStr = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                messageDiv.innerHTML = `
+                    <div class="message-header">
+                        <div class="user-avatar">${initials}</div>
+                        <div class="username">${username}</div>
+                        <div class="timestamp">${timeStr}</div>
+                    </div>
+                    <div class="message-text">${message}</div>
+                `;
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            simulateChatMessage() {
+                const users = [
+                    { name: 'David P.', initials: 'DP' },
+                    { name: 'Lisa M.', initials: 'LM' },
+                    { name: 'Robert K.', initials: 'RK' },
+                    { name: 'Emma W.', initials: 'EW' },
+                    { name: 'James L.', initials: 'JL' }
+                ];
+
+                const messages = [
+                    "Great pitch! 👏",
+                    "What's your customer acquisition cost?",
+                    "Impressive team background!",
+                    "How do you plan to scale?",
+                    "The market size is compelling",
+                    "What's your competitive advantage?",
+                    "Love the sustainability focus! 🌱",
+                    "When will you need the funding?",
+                    "Strong revenue growth! 📊",
+                    "How established is your IP?"
+                ];
+
+                const user = users[Math.floor(Math.random() * users.length)];
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                
+                this.addChatMessage(user.name, user.initials, message, new Date());
+            }
+
+            simulateActivity() {
+                // Simulate chat activity
+                setInterval(() => {
+                    if (Math.random() > 0.6) {
+                        this.simulateChatMessage();
+                    }
+                }, 5000 + Math.random() * 10000);
+
+                // Simulate schedule updates
+                setTimeout(() => {
+                    this.updateSchedule();
+                }, 15 * 60 * 1000); // 15 minutes
+            }
+
+            updateSchedule() {
+                // Move to next presentation
+                const activeItem = document.querySelector('.schedule-item.active');
+                if (activeItem && activeItem.nextElementSibling) {
+                    activeItem.classList.remove('active');
+                    activeItem.nextElementSibling.classList.add('active');
+                    
+                    // Update current pitch info
+                    const nextCompany = activeItem.nextElementSibling.querySelector('.company-name').textContent;
+                    // Update the "Now Presenting" section accordingly
+                }
+            }
+        }
+
+        // Modal functions
+        function showInterestModal() {
+            document.getElementById('interest-modal').style.display = 'block';
+        }
+
+        function closeInterestModal() {
+            document.getElementById('interest-modal').style.display = 'none';
+        }
+
+        function addToWatchlist() {
+            alert('EcoTech Solutions added to your watchlist!');
+        }
+
+        function sendChatMessage() {
+            if (window.liveEvent) {
+                window.liveEvent.sendChatMessage();
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.liveEvent = new LiveEvent();
+            
+            // Handle interest form submission
+            document.getElementById('interest-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('Your interest has been sent to EcoTech Solutions!');
+                closeInterestModal();
+            });
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('interest-modal');
+            if (e.target === modal) {
+                closeInterestModal();
+            }
+        });
+    </script>
+</body>
+</html>

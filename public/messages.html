@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - PitchMint</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .messages-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            height: 100vh;
+            background: var(--background-color);
+        }
+
+        .messages-sidebar {
+            background: var(--surface-color);
+            border-right: 1px solid var(--surface-tertiary);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--surface-tertiary);
+        }
+
+        .sidebar-header h1 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 2px solid var(--surface-tertiary);
+            border-radius: var(--radius-lg);
+            font-size: 0.9rem;
+            background: var(--surface-secondary);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-tab {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: var(--surface-secondary);
+            color: var(--text-secondary);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+        }
+
+        .filter-tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .conversations-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem 0;
+        }
+
+        .conversation-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 2rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border-bottom: 1px solid var(--surface-tertiary);
+        }
+
+        .conversation-item:hover {
+            background: var(--surface-secondary);
+        }
+
+        .conversation-item.active {
+            background: var(--primary-subtle);
+            border-right: 3px solid var(--primary-color);
+        }
+
+        .conversation-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-full);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            position: relative;
+        }
+
+        .online-indicator {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 12px;
+            height: 12px;
+            background: #10B981;
+            border: 2px solid white;
+            border-radius: var(--radius-full);
+        }
+
+        .conversation-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .conversation-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .conversation-preview {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conversation-meta {
+            text-align: right;
+        }
+
+        .conversation-time {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .unread-badge {
+            background: var(--primary-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+        }
+
+        .chat-area {
+            display: flex;
+            flex-direction: column;
+            background: var(--surface-color);
+        }
+
+        .chat-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--surface-tertiary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-contact {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contact-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-full);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.3rem;
+        }
+
+        .contact-info h2 {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .contact-status {
+            color: var(--success-color);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: var(--radius-full);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        .action-btn.video {
+            background: var(--primary-subtle);
+            color: var(--primary-color);
+        }
+
+        .action-btn.call {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .action-btn.info {
+            background: var(--surface-tertiary);
+            color: var(--text-secondary);
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .messages-container-chat {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            background: linear-gradient(to bottom, var(--surface-color), var(--surface-secondary));
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-end;
+            gap: 0.75rem;
+        }
+
+        .message.sent {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: var(--radius-full);
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            max-width: 70%;
+        }
+
+        .message-bubble {
+            padding: 1rem 1.25rem;
+            border-radius: 1.5rem;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .message.received .message-bubble {
+            background: white;
+            color: var(--text-primary);
+            border-bottom-left-radius: 0.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .message.sent .message-bubble {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-bottom-right-radius: 0.5rem;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        .message.sent .message-time {
+            text-align: right;
+        }
+
+        .message.received .message-time {
+            text-align: left;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 0.25rem;
+            padding: 1rem 1.25rem;
+            background: white;
+            border-radius: 1.5rem;
+            border-bottom-left-radius: 0.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-light);
+            border-radius: var(--radius-full);
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .message-input-container {
+            padding: 2rem;
+            border-top: 1px solid var(--surface-tertiary);
+            background: var(--surface-color);
+        }
+
+        .message-input-wrapper {
+            display: flex;
+            align-items: flex-end;
+            gap: 1rem;
+            background: var(--surface-secondary);
+            border-radius: var(--radius-xl);
+            padding: 1rem;
+            border: 2px solid transparent;
+            transition: all var(--transition-fast);
+        }
+
+        .message-input-wrapper:focus-within {
+            border-color: var(--primary-color);
+            background: white;
+        }
+
+        .message-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            resize: none;
+            font-family: inherit;
+            font-size: 1rem;
+            line-height: 1.5;
+            max-height: 120px;
+            min-height: 24px;
+        }
+
+        .message-input:focus {
+            outline: none;
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .input-action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: var(--radius-full);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .input-action-btn:hover {
+            background: var(--primary-subtle);
+            color: var(--primary-color);
+        }
+
+        .send-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .send-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .messages-container {
+                grid-template-columns: 1fr;
+            }
+
+            .messages-sidebar {
+                display: none;
+            }
+
+            .messages-sidebar.mobile-open {
+                display: flex;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 1000;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .message-input-container {
+                padding: 1rem;
+            }
+
+            .chat-header {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="messages-container">
+        <!-- Messages Sidebar -->
+        <div class="messages-sidebar">
+            <div class="sidebar-header">
+                <h1><i class="fas fa-envelope"></i> Messages</h1>
+                
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Search conversations...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">All</button>
+                    <button class="filter-tab" data-filter="investors">Investors</button>
+                    <button class="filter-tab" data-filter="startups">Startups</button>
+                </div>
+            </div>
+
+            <div class="conversations-list" id="conversations-list">
+                <div class="conversation-item active" data-conversation="jennifer">
+                    <div class="conversation-avatar">
+                        JC
+                        <div class="online-indicator"></div>
+                    </div>
+                    <div class="conversation-info">
+                        <div class="conversation-name">Jennifer Chang</div>
+                        <div class="conversation-preview">Looking forward to our meeting...</div>
+                    </div>
+                    <div class="conversation-meta">
+                        <div class="conversation-time">2 min</div>
+                        <div class="unread-badge">2</div>
+                    </div>
+                </div>
+
+                <div class="conversation-item" data-conversation="marcus">
+                    <div class="conversation-avatar">
+                        MT
+                    </div>
+                    <div class="conversation-info">
+                        <div class="conversation-name">Marcus Thompson</div>
+                        <div class="conversation-preview">Thanks for the pitch deck!</div>
+                    </div>
+                    <div class="conversation-meta">
+                        <div class="conversation-time">1h</div>
+                    </div>
+                </div>
+
+                <div class="conversation-item" data-conversation="sarah">
+                    <div class="conversation-avatar">
+                        SC
+                        <div class="online-indicator"></div>
+                    </div>
+                    <div class="conversation-info">
+                        <div class="conversation-name">Sarah Chen (EcoTech)</div>
+                        <div class="conversation-preview">Great meeting today! Here are the...</div>
+                    </div>
+                    <div class="conversation-meta">
+                        <div class="conversation-time">3h</div>
+                        <div class="unread-badge">1</div>
+                    </div>
+                </div>
+
+                <div class="conversation-item" data-conversation="alex">
+                    <div class="conversation-avatar">
+                        AK
+                    </div>
+                    <div class="conversation-info">
+                        <div class="conversation-name">Alex Kim (HealthAI)</div>
+                        <div class="conversation-preview">Would love to discuss the healthcare...</div>
+                    </div>
+                    <div class="conversation-meta">
+                        <div class="conversation-time">1d</div>
+                    </div>
+                </div>
+
+                <div class="conversation-item" data-conversation="david">
+                    <div class="conversation-avatar">
+                        DP
+                    </div>
+                    <div class="conversation-info">
+                        <div class="conversation-name">David Park (FinanceFlow)</div>
+                        <div class="conversation-preview">Updated financials attached</div>
+                    </div>
+                    <div class="conversation-meta">
+                        <div class="conversation-time">2d</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-area" id="chat-area">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="chat-contact">
+                    <div class="contact-avatar">JC</div>
+                    <div class="contact-info">
+                        <h2>Jennifer Chang</h2>
+                        <div class="contact-status">Online now</div>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button class="action-btn video" title="Video Call">
+                        <i class="fas fa-video"></i>
+                    </button>
+                    <button class="action-btn call" title="Voice Call">
+                        <i class="fas fa-phone"></i>
+                    </button>
+                    <button class="action-btn info" title="Contact Info">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages Container -->
+            <div class="messages-container-chat" id="messages-container">
+                <div class="message received">
+                    <div class="message-avatar">JC</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            Hi! I'm very interested in EcoTech Solutions and would love to learn more about your clean technology approach.
+                        </div>
+                        <div class="message-time">Yesterday, 3:20 PM</div>
+                    </div>
+                </div>
+
+                <div class="message sent">
+                    <div class="message-avatar">You</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            Thank you for your interest! I'd be happy to share more details. Our technology focuses on sustainable energy storage solutions.
+                        </div>
+                        <div class="message-time">Yesterday, 3:45 PM</div>
+                    </div>
+                </div>
+
+                <div class="message received">
+                    <div class="message-avatar">JC</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            That sounds fascinating! What's your current traction and market size?
+                        </div>
+                        <div class="message-time">Yesterday, 4:10 PM</div>
+                    </div>
+                </div>
+
+                <div class="message sent">
+                    <div class="message-avatar">You</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            We currently have $500K ARR with 100+ enterprise clients. The addressable market is estimated at $50B globally. I can share our pitch deck if you're interested.
+                        </div>
+                        <div class="message-time">Today, 9:30 AM</div>
+                    </div>
+                </div>
+
+                <div class="message received">
+                    <div class="message-avatar">JC</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            Absolutely! Please send it over. I'd also like to schedule a call to discuss potential investment terms.
+                        </div>
+                        <div class="message-time">Today, 10:15 AM</div>
+                    </div>
+                </div>
+
+                <div class="message received">
+                    <div class="message-avatar">JC</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            Looking forward to our meeting tomorrow at 2 PM PST!
+                        </div>
+                        <div class="message-time">2 minutes ago</div>
+                    </div>
+                </div>
+
+                <!-- Typing Indicator -->
+                <div class="typing-indicator" id="typing-indicator" style="display: none;">
+                    <div class="message-avatar">JC</div>
+                    <div class="typing-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message Input -->
+            <div class="message-input-container">
+                <div class="message-input-wrapper">
+                    <textarea class="message-input" placeholder="Type a message..." rows="1"></textarea>
+                    <div class="input-actions">
+                        <button class="input-action-btn" title="Attach File">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <button class="input-action-btn" title="Add Emoji">
+                            <i class="fas fa-smile"></i>
+                        </button>
+                        <button class="input-action-btn send-btn" title="Send Message" id="send-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chat functionality
+        class ChatApp {
+            constructor() {
+                this.currentConversation = 'jennifer';
+                this.conversations = {
+                    jennifer: {
+                        name: 'Jennifer Chang',
+                        avatar: 'JC',
+                        status: 'Online now',
+                        online: true,
+                        messages: []
+                    },
+                    marcus: {
+                        name: 'Marcus Thompson',
+                        avatar: 'MT',
+                        status: 'Last seen 2h ago',
+                        online: false,
+                        messages: []
+                    },
+                    sarah: {
+                        name: 'Sarah Chen (EcoTech)',
+                        avatar: 'SC',
+                        status: 'Online now',
+                        online: true,
+                        messages: []
+                    },
+                    alex: {
+                        name: 'Alex Kim (HealthAI)',
+                        avatar: 'AK',
+                        status: 'Last seen 1h ago',
+                        online: false,
+                        messages: []
+                    },
+                    david: {
+                        name: 'David Park (FinanceFlow)',
+                        avatar: 'DP',
+                        status: 'Last seen 3h ago',
+                        online: false,
+                        messages: []
+                    }
+                };
+
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.autoResizeTextarea();
+                this.scrollToBottom();
+            }
+
+            setupEventListeners() {
+                // Conversation switching
+                document.querySelectorAll('.conversation-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        this.switchConversation(item.dataset.conversation);
+                    });
+                });
+
+                // Send message
+                const sendBtn = document.getElementById('send-btn');
+                const messageInput = document.querySelector('.message-input');
+                
+                sendBtn.addEventListener('click', () => this.sendMessage());
+                messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+
+                // Filter tabs
+                document.querySelectorAll('.filter-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        this.filterConversations(e.target.dataset.filter);
+                    });
+                });
+
+                // Search functionality
+                const searchInput = document.querySelector('.search-input');
+                searchInput.addEventListener('input', (e) => {
+                    this.searchConversations(e.target.value);
+                });
+
+                // Action buttons
+                document.querySelectorAll('.action-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.handleAction(btn);
+                    });
+                });
+            }
+
+            switchConversation(conversationId) {
+                // Update active conversation in sidebar
+                document.querySelectorAll('.conversation-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelector(`[data-conversation="${conversationId}"]`).classList.add('active');
+
+                // Update chat header
+                const conversation = this.conversations[conversationId];
+                const contactAvatar = document.querySelector('.contact-avatar');
+                const contactName = document.querySelector('.contact-info h2');
+                const contactStatus = document.querySelector('.contact-status');
+
+                contactAvatar.textContent = conversation.avatar;
+                contactName.textContent = conversation.name;
+                contactStatus.textContent = conversation.status;
+                contactStatus.style.color = conversation.online ? 'var(--success-color)' : 'var(--text-secondary)';
+
+                // Clear unread badge
+                const badge = document.querySelector(`[data-conversation="${conversationId}"] .unread-badge`);
+                if (badge) {
+                    badge.remove();
+                }
+
+                this.currentConversation = conversationId;
+                
+                // Load conversation messages (simulate)
+                this.loadConversationMessages(conversationId);
+            }
+
+            loadConversationMessages(conversationId) {
+                // This would normally load from server
+                console.log(`Loading conversation: ${conversationId}`);
+                
+                // Simulate typing indicator occasionally
+                if (Math.random() > 0.7) {
+                    this.showTypingIndicator();
+                    setTimeout(() => this.hideTypingIndicator(), 2000);
+                }
+            }
+
+            sendMessage() {
+                const messageInput = document.querySelector('.message-input');
+                const messageText = messageInput.value.trim();
+                
+                if (!messageText) return;
+
+                // Add message to chat
+                this.addMessage(messageText, true);
+                
+                // Clear input
+                messageInput.value = '';
+                messageInput.style.height = '24px';
+
+                // Scroll to bottom
+                this.scrollToBottom();
+
+                // Simulate response
+                setTimeout(() => {
+                    this.simulateResponse();
+                }, 1000 + Math.random() * 2000);
+            }
+
+            addMessage(text, sent = false) {
+                const messagesContainer = document.getElementById('messages-container');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sent ? 'sent' : 'received'}`;
+                
+                const currentConv = this.conversations[this.currentConversation];
+                const avatar = sent ? 'You' : currentConv.avatar;
+                
+                messageDiv.innerHTML = `
+                    <div class="message-avatar">${avatar}</div>
+                    <div class="message-content">
+                        <div class="message-bubble">${text}</div>
+                        <div class="message-time">Just now</div>
+                    </div>
+                `;
+                
+                messagesContainer.appendChild(messageDiv);
+                this.scrollToBottom();
+            }
+
+            simulateResponse() {
+                const responses = [
+                    "Thanks for the information!",
+                    "That sounds great, let me review this.",
+                    "I'll get back to you on this soon.",
+                    "Interesting approach, tell me more.",
+                    "Can we schedule a call to discuss?",
+                    "I'd like to learn more about your metrics."
+                ];
+                
+                this.showTypingIndicator();
+                
+                setTimeout(() => {
+                    this.hideTypingIndicator();
+                    const response = responses[Math.floor(Math.random() * responses.length)];
+                    this.addMessage(response, false);
+                }, 1500);
+            }
+
+            showTypingIndicator() {
+                document.getElementById('typing-indicator').style.display = 'flex';
+                this.scrollToBottom();
+            }
+
+            hideTypingIndicator() {
+                document.getElementById('typing-indicator').style.display = 'none';
+            }
+
+            scrollToBottom() {
+                const messagesContainer = document.getElementById('messages-container');
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            autoResizeTextarea() {
+                const messageInput = document.querySelector('.message-input');
+                messageInput.addEventListener('input', function() {
+                    this.style.height = '24px';
+                    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+                });
+            }
+
+            filterConversations(filter) {
+                document.querySelectorAll('.filter-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+
+                // Here you would filter the conversation list
+                console.log(`Filtering by: ${filter}`);
+            }
+
+            searchConversations(query) {
+                const conversations = document.querySelectorAll('.conversation-item');
+                conversations.forEach(conv => {
+                    const name = conv.querySelector('.conversation-name').textContent.toLowerCase();
+                    if (name.includes(query.toLowerCase())) {
+                        conv.style.display = 'flex';
+                    } else {
+                        conv.style.display = query ? 'none' : 'flex';
+                    }
+                });
+            }
+
+            handleAction(btn) {
+                const action = btn.classList.contains('video') ? 'video' : 
+                             btn.classList.contains('call') ? 'call' : 'info';
+                
+                switch(action) {
+                    case 'video':
+                        alert('Starting video call...');
+                        break;
+                    case 'call':
+                        alert('Starting voice call...');
+                        break;
+                    case 'info':
+                        alert('Showing contact info...');
+                        break;
+                }
+            }
+        }
+
+        // Initialize chat app
+        document.addEventListener('DOMContentLoaded', () => {
+            new ChatApp();
+        });
+    </script>
+</body>
+</html>

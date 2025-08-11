@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard - PitchMint</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .analytics-container {
+            background: var(--background-color);
+            min-height: 100vh;
+        }
+
+        .analytics-header {
+            background: var(--surface-color);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-title p {
+            color: var(--text-secondary);
+        }
+
+        .time-range-selector {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .range-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--surface-tertiary);
+            background: white;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all var(--transition-fast);
+        }
+
+        .range-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .range-btn:hover {
+            border-color: var(--primary-color);
+        }
+
+        .analytics-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            gap: 2rem;
+        }
+
+        .metrics-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: var(--surface-color);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--surface-tertiary);
+            transition: all var(--transition-fast);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .metric-icon.views {
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+        }
+
+        .metric-icon.interests {
+            background: linear-gradient(135deg, #10B981, #047857);
+        }
+
+        .metric-icon.messages {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+        }
+
+        .metric-icon.engagement {
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+        }
+
+        .metric-change {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .change-positive {
+            color: var(--success-color);
+        }
+
+        .change-negative {
+            color: var(--error-color);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .chart-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--surface-color);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--surface-tertiary);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .chart-title {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            padding: 1rem;
+            background: linear-gradient(to top, rgba(29, 77, 79, 0.05), transparent);
+            border-radius: var(--radius-lg);
+        }
+
+        .chart-bar {
+            background: linear-gradient(to top, var(--primary-color), var(--secondary-color));
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            min-width: 30px;
+            transition: all var(--transition-fast);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .chart-bar:hover {
+            transform: scaleY(1.05);
+            filter: brightness(1.1);
+        }
+
+        .chart-bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+
+        .chart-bar:hover::after {
+            opacity: 1;
+        }
+
+        .chart-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .pie-chart {
+            width: 200px;
+            height: 200px;
+            margin: 2rem auto;
+            position: relative;
+        }
+
+        .pie-segment {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 50%);
+        }
+
+        .segment-1 {
+            background: conic-gradient(from 0deg, var(--primary-color) 0deg, var(--primary-color) 144deg, transparent 144deg);
+        }
+
+        .segment-2 {
+            background: conic-gradient(from 144deg, var(--secondary-color) 0deg, var(--secondary-color) 108deg, transparent 108deg);
+        }
+
+        .segment-3 {
+            background: conic-gradient(from 252deg, var(--accent-color) 0deg, var(--accent-color) 72deg, transparent 72deg);
+        }
+
+        .segment-4 {
+            background: conic-gradient(from 324deg, var(--text-light) 0deg, var(--text-light) 36deg, transparent 36deg);
+        }
+
+        .pie-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: var(--radius-sm);
+        }
+
+        .legend-label {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .legend-value {
+            margin-left: auto;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .insights-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .insights-card {
+            background: var(--surface-color);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--surface-tertiary);
+        }
+
+        .insights-title {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .insight-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--surface-tertiary);
+        }
+
+        .insight-item:last-child {
+            border-bottom: none;
+        }
+
+        .insight-info {
+            flex: 1;
+        }
+
+        .insight-label {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .insight-sublabel {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .insight-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .recommendations-card {
+            grid-column: 1 / -1;
+        }
+
+        .recommendation-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .recommendation-item {
+            background: var(--primary-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .recommendation-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .recommendation-description {
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-dark);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .analytics-grid {
+                padding: 0 1rem;
+            }
+
+            .chart-section {
+                grid-template-columns: 1fr;
+            }
+
+            .insights-section {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="analytics-container">
+        <!-- Header -->
+        <header class="analytics-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <h1><i class="fas fa-chart-bar"></i> Analytics Dashboard</h1>
+                    <p>Track your startup's performance and investor engagement</p>
+                </div>
+                <div class="time-range-selector">
+                    <button class="range-btn" data-range="7d">7 Days</button>
+                    <button class="range-btn active" data-range="30d">30 Days</button>
+                    <button class="range-btn" data-range="90d">90 Days</button>
+                    <button class="range-btn" data-range="1y">1 Year</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Analytics Grid -->
+        <div class="analytics-grid">
+            <!-- Metrics Overview -->
+            <div class="metrics-overview">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon views">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="metric-change change-positive">
+                            <i class="fas fa-arrow-up"></i>
+                            +23.5%
+                        </div>
+                    </div>
+                    <div class="metric-value" data-target="1247">0</div>
+                    <div class="metric-label">Total Views</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon interests">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="metric-change change-positive">
+                            <i class="fas fa-arrow-up"></i>
+                            +15.2%
+                        </div>
+                    </div>
+                    <div class="metric-value" data-target="23">0</div>
+                    <div class="metric-label">Investor Interests</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon messages">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="metric-change change-positive">
+                            <i class="fas fa-arrow-up"></i>
+                            +41.8%
+                        </div>
+                    </div>
+                    <div class="metric-value" data-target="8">0</div>
+                    <div class="metric-label">New Messages</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon engagement">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="metric-change change-positive">
+                            <i class="fas fa-arrow-up"></i>
+                            +8.3%
+                        </div>
+                    </div>
+                    <div class="metric-value" data-target="1.84">0</div>
+                    <div class="metric-label">Engagement Rate (%)</div>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <div class="chart-section">
+                <!-- Views Chart -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Daily Views</h3>
+                        <div class="metric-change change-positive">
+                            <i class="fas fa-trending-up"></i>
+                            Trending Up
+                        </div>
+                    </div>
+                    <div class="chart-container" id="views-chart">
+                        <div class="chart-bar" style="height: 60%;" data-value="47"></div>
+                        <div class="chart-bar" style="height: 75%;" data-value="62"></div>
+                        <div class="chart-bar" style="height: 45%;" data-value="38"></div>
+                        <div class="chart-bar" style="height: 90%;" data-value="78"></div>
+                        <div class="chart-bar" style="height: 65%;" data-value="52"></div>
+                        <div class="chart-bar" style="height: 100%;" data-value="89"></div>
+                        <div class="chart-bar" style="height: 85%;" data-value="73"></div>
+                    </div>
+                    <div class="chart-labels">
+                        <span>Mon</span>
+                        <span>Tue</span>
+                        <span>Wed</span>
+                        <span>Thu</span>
+                        <span>Fri</span>
+                        <span>Sat</span>
+                        <span>Sun</span>
+                    </div>
+                </div>
+
+                <!-- Investor Interest Sources -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Interest Sources</h3>
+                    </div>
+                    <div class="pie-chart">
+                        <div class="pie-segment segment-1"></div>
+                        <div class="pie-segment segment-2"></div>
+                        <div class="pie-segment segment-3"></div>
+                        <div class="pie-segment segment-4"></div>
+                    </div>
+                    <div class="pie-legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: var(--primary-color);"></div>
+                            <span class="legend-label">Direct Views</span>
+                            <span class="legend-value">40%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: var(--secondary-color);"></div>
+                            <span class="legend-label">Live Events</span>
+                            <span class="legend-value">30%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: var(--accent-color);"></div>
+                            <span class="legend-label">Referrals</span>
+                            <span class="legend-value">20%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: var(--text-light);"></div>
+                            <span class="legend-label">Search</span>
+                            <span class="legend-value">10%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insights Section -->
+            <div class="insights-section">
+                <!-- Top Investors -->
+                <div class="insights-card">
+                    <h3 class="insights-title">
+                        <i class="fas fa-star"></i>
+                        Top Interested Investors
+                    </h3>
+                    <div class="insight-item">
+                        <div class="insight-info">
+                            <div class="insight-label">Jennifer Chang</div>
+                            <div class="insight-sublabel">VentureCapital Partners</div>
+                        </div>
+                        <div class="insight-value">High Interest</div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-info">
+                            <div class="insight-label">Marcus Thompson</div>
+                            <div class="insight-sublabel">TechFund Ventures</div>
+                        </div>
+                        <div class="insight-value">Medium Interest</div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-info">
+                            <div class="insight-label">Sarah Wilson</div>
+                            <div class="insight-sublabel">Angel Network Group</div>
+                        </div>
+                        <div class="insight-value">Medium Interest</div>
+                    </div>
+                </div>
+
+                <!-- Performance Metrics -->
+                <div class="insights-card">
+                    <h3 class="insights-title">
+                        <i class="fas fa-trophy"></i>
+                        Performance Metrics
+                    </h3>
+                    <div class="insight-item">
+                        <div class="insight-info">
+                            <div class="insight-label">Avg. Time on Page</div>
+                            <div class="insight-sublabel">How long visitors stay</div>
+                        </div>
+                        <div class="insight-value">3:24</div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-info">
+                            <div class="insight-label">Conversion Rate</div>
+                            <div class="insight-sublabel">Views to interests</div>
+                        </div>
+                        <div class="insight-value">1.84%</div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-info">
+                            <div class="insight-label">Response Rate</div>
+                            <div class="insight-sublabel">Messages replied</div>
+                        </div>
+                        <div class="insight-value">87.5%</div>
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                <div class="insights-card recommendations-card">
+                    <h3 class="insights-title">
+                        <i class="fas fa-lightbulb"></i>
+                        AI-Powered Recommendations
+                    </h3>
+                    <div class="recommendation-list">
+                        <div class="recommendation-item">
+                            <div class="recommendation-title">Optimize Your Pitch Deck</div>
+                            <div class="recommendation-description">
+                                Your traction slide is getting 40% more attention than average. Consider highlighting those metrics earlier in your presentation.
+                            </div>
+                        </div>
+                        <div class="recommendation-item">
+                            <div class="recommendation-title">Engage with Interested Investors</div>
+                            <div class="recommendation-description">
+                                Jennifer Chang from VentureCapital Partners has viewed your pitch 3 times. Consider reaching out with a personalized message.
+                            </div>
+                        </div>
+                        <div class="recommendation-item">
+                            <div class="recommendation-title">Join Upcoming Events</div>
+                            <div class="recommendation-description">
+                                The CleanTech Demo Day tomorrow has 247 registered attendees. Your clean technology focus makes you a perfect fit.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="dashboard-startup.html" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Dashboard
+                </a>
+                <button class="btn btn-secondary" onclick="exportReport()">
+                    <i class="fas fa-download"></i>
+                    Export Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Analytics Dashboard Functionality
+        class AnalyticsDashboard {
+            constructor() {
+                this.currentRange = '30d';
+                this.init();
+            }
+
+            init() {
+                this.setupTimeRangeSelector();
+                this.animateMetrics();
+                this.loadAnalyticsData();
+            }
+
+            setupTimeRangeSelector() {
+                const rangeButtons = document.querySelectorAll('.range-btn');
+                rangeButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        rangeButtons.forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.currentRange = e.target.dataset.range;
+                        this.loadAnalyticsData();
+                    });
+                });
+            }
+
+            animateMetrics() {
+                const metricValues = document.querySelectorAll('.metric-value');
+                metricValues.forEach(metric => {
+                    const target = parseFloat(metric.dataset.target);
+                    let current = 0;
+                    const increment = target / 100;
+                    
+                    const updateMetric = () => {
+                        if (current < target) {
+                            current += increment;
+                            if (target >= 1) {
+                                metric.textContent = Math.floor(current).toLocaleString();
+                            } else {
+                                metric.textContent = current.toFixed(2);
+                            }
+                            requestAnimationFrame(updateMetric);
+                        } else {
+                            if (target >= 1) {
+                                metric.textContent = target.toLocaleString();
+                            } else {
+                                metric.textContent = target.toFixed(2);
+                            }
+                        }
+                    };
+                    
+                    setTimeout(() => updateMetric(), Math.random() * 500);
+                });
+            }
+
+            loadAnalyticsData() {
+                // Simulate loading data based on time range
+                console.log(`Loading analytics data for: ${this.currentRange}`);
+                
+                // In a real app, this would make API calls to fetch data
+                // For demo, we'll just update the charts with new data
+                this.updateCharts();
+            }
+
+            updateCharts() {
+                // Simulate chart updates
+                const chartBars = document.querySelectorAll('.chart-bar');
+                chartBars.forEach(bar => {
+                    const newHeight = Math.floor(Math.random() * 80) + 20;
+                    const newValue = Math.floor(Math.random() * 100) + 20;
+                    
+                    bar.style.height = `${newHeight}%`;
+                    bar.dataset.value = newValue;
+                });
+
+                // Add visual feedback
+                const chartsContainer = document.querySelector('.chart-section');
+                chartsContainer.style.opacity = '0.7';
+                
+                setTimeout(() => {
+                    chartsContainer.style.opacity = '1';
+                }, 300);
+            }
+        }
+
+        // Export functionality
+        function exportReport() {
+            // Simulate report generation
+            const loadingBtn = event.target;
+            const originalText = loadingBtn.innerHTML;
+            
+            loadingBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            loadingBtn.disabled = true;
+            
+            setTimeout(() => {
+                alert('Analytics report has been generated and downloaded!');
+                loadingBtn.innerHTML = originalText;
+                loadingBtn.disabled = false;
+            }, 2000);
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            new AnalyticsDashboard();
+        });
+
+        // Add interactive features to chart bars
+        document.querySelectorAll('.chart-bar').forEach(bar => {
+            bar.addEventListener('click', () => {
+                const value = bar.dataset.value;
+                const day = bar.parentNode.children[Array.from(bar.parentNode.children).indexOf(bar)];
+                alert(`This day had ${value} views`);
+            });
+        });
+    </script>
+</body>
+</html>

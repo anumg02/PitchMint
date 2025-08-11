@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover - PitchMint</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .discover-container {
+            background: var(--background-color);
+            min-height: 100vh;
+        }
+
+        .discover-header {
+            background: var(--surface-color);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-title p {
+            color: var(--text-secondary);
+        }
+
+        .view-toggle {
+            display: flex;
+            background: var(--surface-tertiary);
+            border-radius: var(--radius-lg);
+            padding: 0.25rem;
+        }
+
+        .toggle-btn {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+            color: var(--text-secondary);
+        }
+
+        .toggle-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .discover-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+        }
+
+        .filters-sidebar {
+            background: var(--surface-color);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            height: fit-content;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--surface-tertiary);
+        }
+
+        .filters-title {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .filter-section {
+            margin-bottom: 2rem;
+        }
+
+        .filter-label {
+            color: var(--text-primary);
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .filter-input,
+        .filter-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--surface-tertiary);
+            border-radius: var(--radius-lg);
+            background: var(--surface-color);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: border-color var(--transition-fast);
+        }
+
+        .filter-input:focus,
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .filter-checkboxes {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+        }
+
+        .checkbox-label {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .range-input {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .range-values {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-filter {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: var(--radius-lg);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-apply {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-apply:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-clear {
+            background: var(--surface-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-clear:hover {
+            background: var(--text-light);
+        }
+
+        .results-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .search-bar {
+            background: var(--surface-color);
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--surface-tertiary);
+        }
+
+        .search-input-container {
+            position: relative;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid var(--surface-tertiary);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            background: var(--surface-color);
+            color: var(--text-primary);
+            transition: border-color var(--transition-fast);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .search-btn {
+            padding: 1rem 2rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .search-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .results-count {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .sort-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sort-select {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--surface-tertiary);
+            border-radius: var(--radius-lg);
+            background: var(--surface-color);
+            color: var(--text-primary);
+        }
+
+        .results-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .result-card {
+            background: var(--surface-color);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--surface-tertiary);
+            transition: all var(--transition-fast);
+        }
+
+        .result-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .company-info {
+            flex: 1;
+        }
+
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .company-name {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .company-tagline {
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .company-metrics {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .metric {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .card-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .interest-btn {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .interest-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .interest-btn.interested {
+            background: var(--success-color);
+        }
+
+        .bookmark-btn,
+        .share-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--surface-tertiary);
+            background: var(--surface-color);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bookmark-btn:hover,
+        .share-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .bookmark-btn.bookmarked {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: white;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .tag {
+            background: var(--primary-subtle);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .funding-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--primary-subtle);
+            border-radius: var(--radius-lg);
+        }
+
+        .funding-item {
+            text-align: center;
+        }
+
+        .funding-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .funding-value {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .load-more {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .load-more-btn {
+            padding: 1rem 3rem;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .load-more-btn:hover {
+            background: var(--secondary-dark);
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .discover-content {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .filters-sidebar {
+                position: sticky;
+                top: 1rem;
+                z-index: 10;
+            }
+
+            .search-input-container {
+                flex-direction: column;
+            }
+
+            .company-metrics {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .funding-info {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .card-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="discover-container">
+        <!-- Header -->
+        <header class="discover-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <h1><i class="fas fa-search"></i> Discover</h1>
+                    <p>Find the perfect startups to invest in or connect with top investors</p>
+                </div>
+                <div class="view-toggle">
+                    <button class="toggle-btn active" data-view="startups">
+                        <i class="fas fa-rocket"></i> Startups
+                    </button>
+                    <button class="toggle-btn" data-view="investors">
+                        <i class="fas fa-handshake"></i> Investors
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="discover-content">
+            <!-- Filters Sidebar -->
+            <aside class="filters-sidebar">
+                <h3 class="filters-title">
+                    <i class="fas fa-filter"></i>
+                    Filters
+                </h3>
+
+                <!-- Industry Filter -->
+                <div class="filter-section">
+                    <label class="filter-label">Industry</label>
+                    <div class="filter-checkboxes">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="tech" class="checkbox" checked>
+                            <label for="tech" class="checkbox-label">Technology (247)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="healthcare" class="checkbox">
+                            <label for="healthcare" class="checkbox-label">Healthcare (89)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="fintech" class="checkbox">
+                            <label for="fintech" class="checkbox-label">FinTech (156)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cleantech" class="checkbox">
+                            <label for="cleantech" class="checkbox-label">CleanTech (78)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="ecommerce" class="checkbox">
+                            <label for="ecommerce" class="checkbox-label">E-commerce (134)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stage Filter -->
+                <div class="filter-section">
+                    <label class="filter-label">Company Stage</label>
+                    <select class="filter-select" id="stage-filter">
+                        <option value="">All Stages</option>
+                        <option value="idea">Idea Stage</option>
+                        <option value="prototype">Prototype</option>
+                        <option value="mvp">MVP</option>
+                        <option value="early-revenue">Early Revenue</option>
+                        <option value="growth">Growth Stage</option>
+                    </select>
+                </div>
+
+                <!-- Funding Range -->
+                <div class="filter-section">
+                    <label class="filter-label">Funding Sought</label>
+                    <input type="range" class="range-input" min="10000" max="10000000" value="1000000" id="funding-range">
+                    <div class="range-values">
+                        <span>$10K</span>
+                        <span id="funding-value">$1M</span>
+                        <span>$10M+</span>
+                    </div>
+                </div>
+
+                <!-- Location Filter -->
+                <div class="filter-section">
+                    <label class="filter-label">Location</label>
+                    <input type="text" class="filter-input" placeholder="City, Country" id="location-filter">
+                </div>
+
+                <!-- Rating Filter -->
+                <div class="filter-section">
+                    <label class="filter-label">Minimum Rating</label>
+                    <select class="filter-select" id="rating-filter">
+                        <option value="">All Ratings</option>
+                        <option value="4">4+ Stars</option>
+                        <option value="3">3+ Stars</option>
+                        <option value="2">2+ Stars</option>
+                    </select>
+                </div>
+
+                <!-- Filter Actions -->
+                <div class="filter-actions">
+                    <button class="btn-filter btn-apply">Apply Filters</button>
+                    <button class="btn-filter btn-clear">Clear All</button>
+                </div>
+            </aside>
+
+            <!-- Results Container -->
+            <main class="results-container">
+                <!-- Search Bar -->
+                <div class="search-bar">
+                    <div class="search-input-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search startups, technologies, or keywords...">
+                        <button class="search-btn">
+                            <i class="fas fa-search"></i>
+                            Search
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Header -->
+                <div class="results-header">
+                    <div class="results-count">Showing 1-12 of 247 startups</div>
+                    <div class="sort-dropdown">
+                        <label for="sort-select">Sort by:</label>
+                        <select class="sort-select" id="sort-select">
+                            <option value="relevance">Relevance</option>
+                            <option value="newest">Newest First</option>
+                            <option value="funding">Funding Amount</option>
+                            <option value="rating">Highest Rated</option>
+                            <option value="activity">Most Active</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Results Grid -->
+                <div class="results-grid" id="results-grid">
+                    <!-- Startup Cards will be dynamically inserted here -->
+                </div>
+
+                <!-- Load More -->
+                <div class="load-more">
+                    <button class="load-more-btn" onclick="loadMoreResults()">
+                        <i class="fas fa-arrow-down"></i>
+                        Load More Results
+                    </button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Sample startup data
+        const startupData = [
+            {
+                id: 1,
+                name: "EcoTech Solutions",
+                tagline: "Revolutionizing waste management through AI-powered recycling systems",
+                logo: "ET",
+                industry: "CleanTech",
+                stage: "MVP",
+                location: "San Francisco, CA",
+                fundingSought: 2000000,
+                rating: 4.8,
+                employees: 25,
+                founded: 2023,
+                tags: ["AI", "Sustainability", "IoT", "B2B"],
+                metrics: {
+                    revenue: "$250K",
+                    growth: "+150%",
+                    customers: "50+"
+                },
+                isInterested: false,
+                isBookmarked: false
+            },
+            {
+                id: 2,
+                name: "HealthAI Analytics",
+                tagline: "Predictive healthcare analytics platform for early disease detection",
+                logo: "HA",
+                industry: "HealthTech",
+                stage: "Early Revenue",
+                location: "Boston, MA",
+                fundingSought: 5000000,
+                rating: 4.6,
+                employees: 42,
+                founded: 2022,
+                tags: ["AI", "Healthcare", "Analytics", "SaaS"],
+                metrics: {
+                    revenue: "$1.2M",
+                    growth: "+300%",
+                    customers: "120+"
+                },
+                isInterested: true,
+                isBookmarked: true
+            },
+            {
+                id: 3,
+                name: "CryptoSecure",
+                tagline: "Next-generation blockchain security solutions for enterprise",
+                logo: "CS",
+                industry: "FinTech",
+                stage: "Growth",
+                location: "New York, NY",
+                fundingSought: 10000000,
+                rating: 4.4,
+                employees: 78,
+                founded: 2021,
+                tags: ["Blockchain", "Security", "Enterprise", "Crypto"],
+                metrics: {
+                    revenue: "$3.8M",
+                    growth: "+85%",
+                    customers: "200+"
+                },
+                isInterested: false,
+                isBookmarked: false
+            },
+            {
+                id: 4,
+                name: "EduVR Learning",
+                tagline: "Immersive virtual reality education platform for K-12 schools",
+                logo: "EV",
+                industry: "EdTech",
+                stage: "Prototype",
+                location: "Austin, TX",
+                fundingSought: 1500000,
+                rating: 4.2,
+                employees: 18,
+                founded: 2023,
+                tags: ["VR", "Education", "K-12", "Immersive"],
+                metrics: {
+                    revenue: "$50K",
+                    growth: "+200%",
+                    customers: "25+"
+                },
+                isInterested: false,
+                isBookmarked: true
+            }
+        ];
+
+        // Discover Page Controller
+        class DiscoverController {
+            constructor() {
+                this.currentView = 'startups';
+                this.currentData = startupData;
+                this.filteredData = [...startupData];
+                this.init();
+            }
+
+            init() {
+                this.setupViewToggle();
+                this.setupFilters();
+                this.setupSearch();
+                this.renderResults();
+            }
+
+            setupViewToggle() {
+                const toggleBtns = document.querySelectorAll('.toggle-btn');
+                toggleBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        toggleBtns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.currentView = btn.dataset.view;
+                        this.switchView();
+                    });
+                });
+            }
+
+            setupFilters() {
+                // Funding range slider
+                const fundingRange = document.getElementById('funding-range');
+                const fundingValue = document.getElementById('funding-value');
+                
+                fundingRange.addEventListener('input', (e) => {
+                    const value = parseInt(e.target.value);
+                    fundingValue.textContent = this.formatCurrency(value);
+                });
+
+                // Apply filters button
+                document.querySelector('.btn-apply').addEventListener('click', () => {
+                    this.applyFilters();
+                });
+
+                // Clear filters button
+                document.querySelector('.btn-clear').addEventListener('click', () => {
+                    this.clearFilters();
+                });
+            }
+
+            setupSearch() {
+                const searchBtn = document.querySelector('.search-btn');
+                const searchInput = document.querySelector('.search-input');
+
+                searchBtn.addEventListener('click', () => {
+                    this.performSearch();
+                });
+
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.performSearch();
+                    }
+                });
+            }
+
+            switchView() {
+                if (this.currentView === 'startups') {
+                    this.filteredData = [...startupData];
+                    document.querySelector('.results-count').textContent = 'Showing 1-12 of 247 startups';
+                    document.querySelector('.search-input').placeholder = 'Search startups, technologies, or keywords...';
+                } else {
+                    // Switch to investor view (would load investor data)
+                    this.filteredData = []; // Would load investor data here
+                    document.querySelector('.results-count').textContent = 'Showing 1-12 of 156 investors';
+                    document.querySelector('.search-input').placeholder = 'Search investors, firms, or focus areas...';
+                }
+                this.renderResults();
+            }
+
+            applyFilters() {
+                let filtered = [...this.currentData];
+
+                // Industry filter
+                const checkedIndustries = Array.from(document.querySelectorAll('.filter-checkboxes input:checked'))
+                    .map(cb => cb.id);
+                
+                if (checkedIndustries.length > 0) {
+                    const industryMap = {
+                        'tech': 'Technology',
+                        'healthcare': 'HealthTech',
+                        'fintech': 'FinTech',
+                        'cleantech': 'CleanTech',
+                        'ecommerce': 'E-commerce'
+                    };
+                    const selectedIndustries = checkedIndustries.map(id => industryMap[id]).filter(Boolean);
+                    filtered = filtered.filter(item => selectedIndustries.includes(item.industry));
+                }
+
+                // Stage filter
+                const stageFilter = document.getElementById('stage-filter').value;
+                if (stageFilter) {
+                    filtered = filtered.filter(item => item.stage.toLowerCase().replace(' ', '-') === stageFilter);
+                }
+
+                // Funding filter
+                const fundingLimit = parseInt(document.getElementById('funding-range').value);
+                filtered = filtered.filter(item => item.fundingSought <= fundingLimit);
+
+                // Location filter
+                const locationFilter = document.getElementById('location-filter').value.toLowerCase();
+                if (locationFilter) {
+                    filtered = filtered.filter(item => 
+                        item.location.toLowerCase().includes(locationFilter)
+                    );
+                }
+
+                // Rating filter
+                const ratingFilter = document.getElementById('rating-filter').value;
+                if (ratingFilter) {
+                    filtered = filtered.filter(item => item.rating >= parseFloat(ratingFilter));
+                }
+
+                this.filteredData = filtered;
+                this.renderResults();
+                this.updateResultsCount();
+            }
+
+            clearFilters() {
+                // Clear all form inputs
+                document.querySelectorAll('.filter-checkboxes input').forEach(cb => {
+                    cb.checked = cb.id === 'tech'; // Keep tech checked by default
+                });
+                document.getElementById('stage-filter').value = '';
+                document.getElementById('funding-range').value = '1000000';
+                document.getElementById('funding-value').textContent = '$1M';
+                document.getElementById('location-filter').value = '';
+                document.getElementById('rating-filter').value = '';
+
+                // Reset filtered data
+                this.filteredData = [...this.currentData];
+                this.renderResults();
+                this.updateResultsCount();
+            }
+
+            performSearch() {
+                const query = document.querySelector('.search-input').value.toLowerCase();
+                if (query) {
+                    this.filteredData = this.currentData.filter(item =>
+                        item.name.toLowerCase().includes(query) ||
+                        item.tagline.toLowerCase().includes(query) ||
+                        item.tags.some(tag => tag.toLowerCase().includes(query))
+                    );
+                } else {
+                    this.filteredData = [...this.currentData];
+                }
+                this.renderResults();
+                this.updateResultsCount();
+            }
+
+            renderResults() {
+                const resultsGrid = document.getElementById('results-grid');
+                
+                if (this.filteredData.length === 0) {
+                    resultsGrid.innerHTML = `
+                        <div style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+                            <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <h3>No results found</h3>
+                            <p>Try adjusting your filters or search terms</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                resultsGrid.innerHTML = this.filteredData.map(startup => this.createStartupCard(startup)).join('');
+            }
+
+            createStartupCard(startup) {
+                return `
+                    <div class="result-card">
+                        <div class="card-header">
+                            <div class="company-info">
+                                <div class="company-logo">${startup.logo}</div>
+                                <div class="company-name">${startup.name}</div>
+                                <div class="company-tagline">${startup.tagline}</div>
+                                <div class="company-metrics">
+                                    <div class="metric">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        ${startup.location}
+                                    </div>
+                                    <div class="metric">
+                                        <i class="fas fa-users"></i>
+                                        ${startup.employees} employees
+                                    </div>
+                                    <div class="metric">
+                                        <i class="fas fa-calendar"></i>
+                                        Founded ${startup.founded}
+                                    </div>
+                                    <div class="metric">
+                                        <i class="fas fa-star"></i>
+                                        ${startup.rating} rating
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tags-container">
+                            ${startup.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+
+                        <div class="funding-info">
+                            <div class="funding-item">
+                                <div class="funding-label">Stage</div>
+                                <div class="funding-value">${startup.stage}</div>
+                            </div>
+                            <div class="funding-item">
+                                <div class="funding-label">Seeking</div>
+                                <div class="funding-value">${this.formatCurrency(startup.fundingSought)}</div>
+                            </div>
+                            <div class="funding-item">
+                                <div class="funding-label">Revenue</div>
+                                <div class="funding-value">${startup.metrics.revenue}</div>
+                            </div>
+                        </div>
+
+                        <div class="card-actions">
+                            <button class="interest-btn ${startup.isInterested ? 'interested' : ''}" 
+                                    onclick="toggleInterest(${startup.id})">
+                                <i class="fas fa-heart"></i>
+                                ${startup.isInterested ? 'Interested' : 'Show Interest'}
+                            </button>
+                            <button class="bookmark-btn ${startup.isBookmarked ? 'bookmarked' : ''}" 
+                                    onclick="toggleBookmark(${startup.id})">
+                                <i class="fas fa-bookmark"></i>
+                            </button>
+                            <button class="share-btn" onclick="shareStartup(${startup.id})">
+                                <i class="fas fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            updateResultsCount() {
+                const count = this.filteredData.length;
+                const total = this.currentView === 'startups' ? 247 : 156;
+                const type = this.currentView === 'startups' ? 'startups' : 'investors';
+                document.querySelector('.results-count').textContent = 
+                    `Showing 1-${Math.min(count, 12)} of ${count} ${type}`;
+            }
+
+            formatCurrency(amount) {
+                if (amount >= 1000000) {
+                    return `$${(amount / 1000000).toFixed(1)}M`;
+                } else if (amount >= 1000) {
+                    return `$${(amount / 1000).toFixed(0)}K`;
+                } else {
+                    return `$${amount.toLocaleString()}`;
+                }
+            }
+        }
+
+        // Interactive functions
+        function toggleInterest(startupId) {
+            const startup = startupData.find(s => s.id === startupId);
+            if (startup) {
+                startup.isInterested = !startup.isInterested;
+                discoverController.renderResults();
+                
+                const action = startup.isInterested ? 'expressed interest in' : 'removed interest from';
+                console.log(`User ${action} ${startup.name}`);
+            }
+        }
+
+        function toggleBookmark(startupId) {
+            const startup = startupData.find(s => s.id === startupId);
+            if (startup) {
+                startup.isBookmarked = !startup.isBookmarked;
+                discoverController.renderResults();
+                
+                const action = startup.isBookmarked ? 'bookmarked' : 'removed bookmark from';
+                console.log(`User ${action} ${startup.name}`);
+            }
+        }
+
+        function shareStartup(startupId) {
+            const startup = startupData.find(s => s.id === startupId);
+            if (startup) {
+                // Simulate sharing
+                if (navigator.share) {
+                    navigator.share({
+                        title: startup.name,
+                        text: startup.tagline,
+                        url: window.location.href + `?startup=${startupId}`
+                    });
+                } else {
+                    // Fallback
+                    const url = window.location.href + `?startup=${startupId}`;
+                    navigator.clipboard.writeText(url).then(() => {
+                        alert('Link copied to clipboard!');
+                    });
+                }
+            }
+        }
+
+        function loadMoreResults() {
+            // Simulate loading more results
+            const btn = document.querySelector('.load-more-btn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-arrow-down"></i> Load More Results';
+                alert('More results loaded! (In a real app, this would fetch more data)');
+            }, 1500);
+        }
+
+        // Initialize discover controller
+        let discoverController;
+        document.addEventListener('DOMContentLoaded', () => {
+            discoverController = new DiscoverController();
+        });
+    </script>
+</body>
+</html>
